@@ -7,8 +7,19 @@
 //
 
 #import "EntryManager.h"
+#import "UIKit/UIKit.h"
+
+
+@interface EntryManager ()
+
+@property (nonatomic, strong) NSManagedObjectContext *context;
+
+@end
+
 
 @implementation EntryManager
+
+#pragma mark - Constructor & Initializer Methods
 
 + (instancetype)sharedManager {
     static EntryManager *entryManager = nil;
@@ -23,10 +34,20 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+        self.context = [self getContext];
         NSLog(@"Entry Manager initialized");
     }
     
     return self;
+}
+
+
+#pragma mark - Core Data Methods
+
+//Returns the UIApplication's NSManagedObjectContext
+- (NSManagedObjectContext *)getContext {
+    NSManagedObjectContext *managedObjectContext = [(id)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    return managedObjectContext;
 }
 
 @end

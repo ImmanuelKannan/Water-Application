@@ -10,6 +10,8 @@
 		1814B6081D5DAACC00286822 /* Entry+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B6051D5DAACC00286822 /* Entry+CoreDataProperties.m */; };
 		1814B6091D5DAACC00286822 /* Entry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B6071D5DAACC00286822 /* Entry.m */; };
 		1814B60C1D5DAB6100286822 /* EntryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B60B1D5DAB6100286822 /* EntryManager.m */; };
+		1814B6101D5DAF9100286822 /* MainTrackerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B60E1D5DAF9100286822 /* MainTrackerViewController.m */; };
+		1814B6111D5DAF9100286822 /* MainTrackerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1814B60F1D5DAF9100286822 /* MainTrackerViewController.xib */; };
 		184708FF1D5D1A350002BA29 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 184708FE1D5D1A350002BA29 /* main.m */; };
 		184709021D5D1A350002BA29 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 184709011D5D1A350002BA29 /* AppDelegate.m */; };
 		184709051D5D1A350002BA29 /* Water_App.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 184709031D5D1A350002BA29 /* Water_App.xcdatamodeld */; };
@@ -47,6 +49,9 @@
 		1814B6071D5DAACC00286822 /* Entry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Entry.m; sourceTree = "<group>"; };
 		1814B60A1D5DAB6100286822 /* EntryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryManager.h; sourceTree = "<group>"; };
 		1814B60B1D5DAB6100286822 /* EntryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryManager.m; sourceTree = "<group>"; };
+		1814B60D1D5DAF9100286822 /* MainTrackerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTrackerViewController.h; sourceTree = "<group>"; };
+		1814B60E1D5DAF9100286822 /* MainTrackerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTrackerViewController.m; sourceTree = "<group>"; };
+		1814B60F1D5DAF9100286822 /* MainTrackerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainTrackerViewController.xib; sourceTree = "<group>"; };
 		184708FA1D5D1A350002BA29 /* Water App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Water App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		184708FE1D5D1A350002BA29 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		184709001D5D1A350002BA29 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -136,16 +141,19 @@
 			children = (
 				184709001D5D1A350002BA29 /* AppDelegate.h */,
 				184709011D5D1A350002BA29 /* AppDelegate.m */,
-				184709061D5D1A350002BA29 /* Assets.xcassets */,
-				184709081D5D1A350002BA29 /* LaunchScreen.storyboard */,
-				1847090B1D5D1A350002BA29 /* Info.plist */,
-				184709031D5D1A350002BA29 /* Water_App.xcdatamodeld */,
+				1814B60D1D5DAF9100286822 /* MainTrackerViewController.h */,
+				1814B60E1D5DAF9100286822 /* MainTrackerViewController.m */,
+				1814B60F1D5DAF9100286822 /* MainTrackerViewController.xib */,
+				1814B60A1D5DAB6100286822 /* EntryManager.h */,
+				1814B60B1D5DAB6100286822 /* EntryManager.m */,
 				1814B6041D5DAACC00286822 /* Entry+CoreDataProperties.h */,
 				1814B6051D5DAACC00286822 /* Entry+CoreDataProperties.m */,
 				1814B6061D5DAACC00286822 /* Entry.h */,
 				1814B6071D5DAACC00286822 /* Entry.m */,
-				1814B60A1D5DAB6100286822 /* EntryManager.h */,
-				1814B60B1D5DAB6100286822 /* EntryManager.m */,
+				184709061D5D1A350002BA29 /* Assets.xcassets */,
+				184709081D5D1A350002BA29 /* LaunchScreen.storyboard */,
+				1847090B1D5D1A350002BA29 /* Info.plist */,
+				184709031D5D1A350002BA29 /* Water_App.xcdatamodeld */,
 				184708FD1D5D1A350002BA29 /* Supporting Files */,
 			);
 			path = "Water App";
@@ -305,6 +313,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				184709071D5D1A350002BA29 /* Assets.xcassets in Resources */,
+				1814B6111D5DAF9100286822 /* MainTrackerViewController.xib in Resources */,
 				1847090A1D5D1A350002BA29 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -458,6 +467,7 @@
 				1814B6091D5DAACC00286822 /* Entry.m in Sources */,
 				184709021D5D1A350002BA29 /* AppDelegate.m in Sources */,
 				1814B6081D5DAACC00286822 /* Entry+CoreDataProperties.m in Sources */,
+				1814B6101D5DAF9100286822 /* MainTrackerViewController.m in Sources */,
 				184708FF1D5D1A350002BA29 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
