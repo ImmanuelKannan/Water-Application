@@ -10,4 +10,6 @@
 
 @interface EntryManager : NSObject
 
++ (instancetype)sharedManager;
+
 @end
