@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "MainTrackerViewController.h"
+#import "CalendarViewController.h"
 
 @interface AppDelegate ()
 
@@ -20,12 +21,12 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
-    MainTrackerViewController *mtvc = [[MainTrackerViewController alloc] init];
+    CalendarViewController *cvc = [[CalendarViewController alloc] init];
     
-    UITabBarController *tabBarController = [[UITabBarController alloc] init];
-    tabBarController.viewControllers = @[mtvc];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cvc];
+    [cvc loadTrackerViewWithDate:[NSDate date] animated:NO];
     
-    self.window.rootViewController = tabBarController;
+    self.window.rootViewController = navigationController;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;

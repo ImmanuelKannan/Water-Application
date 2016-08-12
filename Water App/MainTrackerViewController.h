@@ -10,4 +10,8 @@
 
 @interface MainTrackerViewController : UIViewController
 
+@property (nonatomic, strong) NSDate *date;
+
+- (instancetype)initWithDate: (NSDate *)date;
+
 @end

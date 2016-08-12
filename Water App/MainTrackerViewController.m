@@ -22,11 +22,25 @@
     return self;
 }
 
+- (instancetype)initWithDate: (NSDate *)date {
+    if (self = [super init]) {
+        self.date = date;
+    }
+    
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"yyyy-MM-dd";
+    if ([[formatter stringFromDate:self.date] isEqualToString:[formatter stringFromDate:[NSDate date]]]) {
+        self.navigationItem.title = @"Today";
+    } else {
+        self.navigationItem.title = [formatter stringFromDate:self.date];
+    }
     
-    self.tabBarItem.title = @"Main Tracker";
 }
 
 - (void)didReceiveMemoryWarning {
