@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1814B6081D5DAACC00286822 /* Entry+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B6051D5DAACC00286822 /* Entry+CoreDataProperties.m */; };
 		1814B6091D5DAACC00286822 /* Entry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B6071D5DAACC00286822 /* Entry.m */; };
+		1814B60C1D5DAB6100286822 /* EntryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814B60B1D5DAB6100286822 /* EntryManager.m */; };
 		184708FF1D5D1A350002BA29 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 184708FE1D5D1A350002BA29 /* main.m */; };
 		184709021D5D1A350002BA29 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 184709011D5D1A350002BA29 /* AppDelegate.m */; };
 		184709051D5D1A350002BA29 /* Water_App.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 184709031D5D1A350002BA29 /* Water_App.xcdatamodeld */; };
@@ -44,6 +45,8 @@
 		1814B6051D5DAACC00286822 /* Entry+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Entry+CoreDataProperties.m"; sourceTree = "<group>"; };
 		1814B6061D5DAACC00286822 /* Entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entry.h; sourceTree = "<group>"; };
 		1814B6071D5DAACC00286822 /* Entry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Entry.m; sourceTree = "<group>"; };
+		1814B60A1D5DAB6100286822 /* EntryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryManager.h; sourceTree = "<group>"; };
+		1814B60B1D5DAB6100286822 /* EntryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntryManager.m; sourceTree = "<group>"; };
 		184708FA1D5D1A350002BA29 /* Water App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Water App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		184708FE1D5D1A350002BA29 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		184709001D5D1A350002BA29 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -141,6 +144,8 @@
 				1814B6051D5DAACC00286822 /* Entry+CoreDataProperties.m */,
 				1814B6061D5DAACC00286822 /* Entry.h */,
 				1814B6071D5DAACC00286822 /* Entry.m */,
+				1814B60A1D5DAB6100286822 /* EntryManager.h */,
+				1814B60B1D5DAB6100286822 /* EntryManager.m */,
 				184708FD1D5D1A350002BA29 /* Supporting Files */,
 			);
 			path = "Water App";
@@ -448,6 +453,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1814B60C1D5DAB6100286822 /* EntryManager.m in Sources */,
 				184709051D5D1A350002BA29 /* Water_App.xcdatamodeld in Sources */,
 				1814B6091D5DAACC00286822 /* Entry.m in Sources */,
 				184709021D5D1A350002BA29 /* AppDelegate.m in Sources */,
