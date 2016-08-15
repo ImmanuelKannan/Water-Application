@@ -7,6 +7,7 @@
 //
 
 #import "MainTrackerViewController.h"
+#import "DateFormatterManager.h"
 
 @interface MainTrackerViewController ()
 
@@ -33,12 +34,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    //Old way of setting the date in the MainTrackerViewController
+    /*
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"yyyy-MM-dd";
     if ([[formatter stringFromDate:self.date] isEqualToString:[formatter stringFromDate:[NSDate date]]]) {
         self.navigationItem.title = @"Today";
     } else {
         self.navigationItem.title = [formatter stringFromDate:self.date];
+    }
+    */
+    
+    if ([[[[DateFormatterManager sharedManager] mediumDate] stringFromDate:self.date] isEqualToString:[[[DateFormatterManager sharedManager] mediumDate] stringFromDate:[NSDate date]]]) {
+        self.navigationItem.title = @"Today";
+    } else {
+        self.navigationItem.title = [[[DateFormatterManager sharedManager] mediumDate] stringFromDate:self.date];
     }
     
 }
