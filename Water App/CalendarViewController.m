@@ -8,8 +8,11 @@
 
 #import "CalendarViewController.h"
 #import "MainTrackerViewController.h"
+#import "DateFormatterManager.h"
 
 @interface CalendarViewController ()
+
+@property (nonatomic, strong) IBOutlet UILabel *dateLabel;
 
 @end
 
@@ -26,6 +29,13 @@
     [_calendarManager setDate:[NSDate date]];
     
     self.navigationItem.title = @"Calendar";
+    
+    
+    /*if ([[[[DateFormatterManager sharedManager] mediumDate] stringFromDate:self.date] isEqualToString:[[[DateFormatterManager sharedManager] mediumDate] stringFromDate:[NSDate date]]]) {
+        self.navigationItem.title = @"Today";
+    } else {
+        self.navigationItem.title = [[[DateFormatterManager sharedManager] mediumDate] stringFromDate:self.date];
+    }*/
 }
 
 - (void)didReceiveMemoryWarning {

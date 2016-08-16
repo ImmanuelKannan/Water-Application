@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "MainTrackerViewController.h"
 #import "CalendarViewController.h"
+#import "MainViewController.h"
 
 @interface AppDelegate ()
 
@@ -22,11 +23,12 @@
     // Override point for customization after application launch.
     
     CalendarViewController *cvc = [[CalendarViewController alloc] init];
+    MainViewController *mvc = [[MainViewController alloc] init];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cvc];
     [cvc loadTrackerViewWithDate:[NSDate date] animated:NO];
     
-    self.window.rootViewController = navigationController;
+    self.window.rootViewController = mvc;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;

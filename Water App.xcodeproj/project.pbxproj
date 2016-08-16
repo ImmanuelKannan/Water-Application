@@ -23,6 +23,8 @@
 		187B732E1D5E300900F24E34 /* CalendarViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 187B732D1D5E300900F24E34 /* CalendarViewController.xib */; };
 		18843A971D60AA6A00856F67 /* DateFormatterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18843A961D60AA6A00856F67 /* DateFormatterManager.m */; };
 		18988FA11D5E2B3200540C77 /* IMG_0081.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 18988FA01D5E2B3200540C77 /* IMG_0081.PNG */; };
+		18D5AB5F1D62153300FA01FE /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D5AB5D1D62153300FA01FE /* MainViewController.m */; };
+		18D5AB601D62153300FA01FE /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18D5AB5E1D62153300FA01FE /* MainViewController.xib */; };
 		65C01FAC34DCF9581D1E7BD7 /* libPods-Water App.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7E641946C9FFB906B0958E0 /* libPods-Water App.a */; };
 		7A1DD4C72F87DC9611C1F8C8 /* libPods-Water AppUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BC4E97425D70DF529A700ED1 /* libPods-Water AppUITests.a */; };
 		84018ED7E5EC5DE9FDED3696 /* libPods-Water AppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2E5C3C14A09BFE8EBD96B14 /* libPods-Water AppTests.a */; };
@@ -76,6 +78,9 @@
 		18843A951D60AA6A00856F67 /* DateFormatterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateFormatterManager.h; sourceTree = "<group>"; };
 		18843A961D60AA6A00856F67 /* DateFormatterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateFormatterManager.m; sourceTree = "<group>"; };
 		18988FA01D5E2B3200540C77 /* IMG_0081.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0081.PNG; sourceTree = "<group>"; };
+		18D5AB5C1D62153300FA01FE /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		18D5AB5D1D62153300FA01FE /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		18D5AB5E1D62153300FA01FE /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
 		39580194057EBA0DF4A5A604 /* Pods-Water AppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Water AppTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Water AppTests/Pods-Water AppTests.release.xcconfig"; sourceTree = "<group>"; };
 		5D1027E81150026436832B3C /* Pods-Water App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Water App.release.xcconfig"; path = "Pods/Target Support Files/Pods-Water App/Pods-Water App.release.xcconfig"; sourceTree = "<group>"; };
 		856ED042F322CE40EDEADDA7 /* Pods-Water App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Water App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Water App/Pods-Water App.debug.xcconfig"; sourceTree = "<group>"; };
@@ -154,6 +159,9 @@
 				187B732A1D5E2EEA00F24E34 /* CalendarViewController.h */,
 				187B732B1D5E2EEA00F24E34 /* CalendarViewController.m */,
 				187B732D1D5E300900F24E34 /* CalendarViewController.xib */,
+				18D5AB5C1D62153300FA01FE /* MainViewController.h */,
+				18D5AB5D1D62153300FA01FE /* MainViewController.m */,
+				18D5AB5E1D62153300FA01FE /* MainViewController.xib */,
 				1814B60D1D5DAF9100286822 /* MainTrackerViewController.h */,
 				1814B60E1D5DAF9100286822 /* MainTrackerViewController.m */,
 				1814B60F1D5DAF9100286822 /* MainTrackerViewController.xib */,
@@ -329,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				184709071D5D1A350002BA29 /* Assets.xcassets in Resources */,
+				18D5AB601D62153300FA01FE /* MainViewController.xib in Resources */,
 				1814B6111D5DAF9100286822 /* MainTrackerViewController.xib in Resources */,
 				187B732E1D5E300900F24E34 /* CalendarViewController.xib in Resources */,
 				18988FA11D5E2B3200540C77 /* IMG_0081.PNG in Resources */,
@@ -483,6 +492,7 @@
 				1814B60C1D5DAB6100286822 /* EntryManager.m in Sources */,
 				184709051D5D1A350002BA29 /* Water_App.xcdatamodeld in Sources */,
 				1814B6091D5DAACC00286822 /* Entry.m in Sources */,
+				18D5AB5F1D62153300FA01FE /* MainViewController.m in Sources */,
 				184709021D5D1A350002BA29 /* AppDelegate.m in Sources */,
 				187B732C1D5E2EEA00F24E34 /* CalendarViewController.m in Sources */,
 				1814B6081D5DAACC00286822 /* Entry+CoreDataProperties.m in Sources */,
