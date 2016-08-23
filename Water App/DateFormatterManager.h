@@ -12,6 +12,7 @@
 
 + (instancetype)sharedManager;
 - (NSDateFormatter *)shortDate;
-- (NSDateFormatter *)mediumDate;
+- (NSDateFormatter *)formatWithMediumStyle;
+- (NSDateFormatter *)formatForEntryDate;
 
 @end

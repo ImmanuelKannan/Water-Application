@@ -11,7 +11,8 @@
 @interface DateFormatterManager ()
 
 @property (nonatomic, strong) NSDateFormatter *shortDateFormatter;
-@property (nonatomic, strong) NSDateFormatter *mediumDateFormatter;
+@property (nonatomic, strong) NSDateFormatter *formatWithMediumStyle;
+@property (nonatomic, strong) NSDateFormatter *formatForEntryDate;
 
 @end
 
@@ -33,7 +34,8 @@
 - (instancetype)init {
     if (self = [super init]) {
         _shortDateFormatter = [[NSDateFormatter alloc] init];
-        _mediumDateFormatter = [[NSDateFormatter alloc] init];
+        _formatWithMediumStyle = [[NSDateFormatter alloc] init];
+        _formatForEntryDate = [[NSDateFormatter alloc] init];
     }
     
     return self;
@@ -47,11 +49,16 @@
     return _shortDateFormatter;
 }
 
-- (NSDateFormatter *)mediumDate {
-    _mediumDateFormatter.dateStyle = NSDateFormatterMediumStyle;
+- (NSDateFormatter *)formatWithMediumStyle {
+    _formatWithMediumStyle.dateStyle = NSDateFormatterMediumStyle;
     
-    return _mediumDateFormatter;
+    return _formatWithMediumStyle;
 }
 
+- (NSDateFormatter *)formatForEntryDate {
+    _formatForEntryDate.dateFormat = @"yyyy-MM-dd";
+    
+    return _formatForEntryDate;
+}
 
 @end
