@@ -16,7 +16,9 @@
 
 @property (nonatomic, strong) NSManagedObjectContext *context;
 
-
+@property (nonatomic, strong) NSArray *fetchedObjects;
+@property (nonatomic, strong) NSEntityDescription *entityDescription;
+@property (nonatomic, strong) NSPredicate *predicate;
 
 @end
 
@@ -44,6 +46,10 @@
         } else {
             NSLog(@"!! - NSManagedObjectContext IS NOT initialized - !!");
         }
+        
+        _fetchedObjects = [[NSArray alloc] init];
+        _entityDescription = [NSEntityDescription entityForName:@"Entry" inManagedObjectContext:self.context];
+        
     }
     
     return self;
@@ -52,27 +58,24 @@
 #pragma mark - Entry and entry manipulation methods
 
 - (Entry *)entryForToday {
-    return [self entryWithDate:[[[DateFormatterManager sharedManager] mediumDate] stringFromDate:[NSDate date]]];
+    return [self entryWithDate:[[[DateFormatterManager sharedManager] formatWithMediumStyle] stringFromDate:[NSDate date]]];
 }
 
 -(Entry *)entryWithDate: (NSString *)date {
-    NSArray *fetchedObjects = [[NSArray alloc] init];
-    NSManagedObjectContext *context = [self getContext];
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Entry" inManagedObjectContext:context];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:entityDescription];
+    [fetchRequest setEntity:self.entityDescription];
     [fetchRequest setPredicate:predicate];
     [fetchRequest setFetchLimit:1];
     
     NSError *error = nil;
-    if ((fetchedObjects = [context executeFetchRequest:fetchRequest error:&error]).count == 1) {
+    if ((self.fetchedObjects = [self.context executeFetchRequest:fetchRequest error:&error]).count == 1) {
         NSLog(@"Object found");
-        return [fetchedObjects objectAtIndex:0];
+        return [self.fetchedObjects objectAtIndex:0];
     } else {
         NSLog(@"Making a new object");
-        Entry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"Entry" inManagedObjectContext:context];
+        Entry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"Entry" inManagedObjectContext:self.context];
         entry.date = date;
         entry.numberOfGlasses = 0;
         return entry;
