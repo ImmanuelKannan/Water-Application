@@ -8,9 +8,14 @@
 
 #import <Foundation/Foundation.h>
 @import CoreData;
+@class Entry;
 
 @interface EntryManager : NSObject
 
 + (instancetype)sharedManager;
+
+- (Entry *)entryForToday;
+- (Entry *)entryWithDate: (NSString *)date;
+- (void)saveData;
 
 @end
