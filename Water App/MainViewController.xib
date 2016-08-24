@@ -11,7 +11,6 @@
                 <outlet property="calendarMenuView" destination="0lp-Ag-AXr" id="NvS-UR-3LG"/>
                 <outlet property="dateLabel" destination="Rfr-SV-AsE" id="85p-Eh-RvD"/>
                 <outlet property="numberOfGlassesLabel" destination="S3L-Gb-C1I" id="FvW-1i-L80"/>
-                <outlet property="showPreferencesButton" destination="5m5-Ud-XTV" id="oPg-pP-b1S"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -53,10 +52,6 @@
                     <connections>
                         <action selector="decrementNumberOfGlasses" destination="-1" eventType="touchUpInside" id="aGn-2C-1Xn"/>
                     </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5m5-Ud-XTV">
-                    <rect key="frame" x="562" y="21" width="30" height="30"/>
-                    <state key="normal" title="Button"/>
                 </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>

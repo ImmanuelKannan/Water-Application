@@ -12,7 +12,6 @@
 #import "Entry.h"
 
 @interface MainViewController ()
-@property (strong, nonatomic) IBOutlet UIButton *showPreferencesButton;
 
 @end
 
@@ -20,7 +19,6 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        _showPreferencesButton = [UIButton buttonWithType:UIButtonTypeCustom];
     }
     
     return self;
@@ -42,9 +40,6 @@
     //Sets initial values for _dateLabel and _numberOfGlassesLabel
     _dateLabel.text = [[EntryManager sharedManager] entryForToday].date;
     _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager sharedManager] entryForToday].numberOfGlasses];
-    
-    UIImage *btnImage = [UIImage imageNamed:@"gear.png"];
-    [_showPreferencesButton setImage:btnImage forState:UIControlStateNormal];
 }
 
 - (void)didReceiveMemoryWarning {
