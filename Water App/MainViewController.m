@@ -38,7 +38,7 @@
     [_calendarManager setDate:[NSDate date]];
     
     //Sets initial values for _dateLabel and _numberOfGlassesLabel
-    _dateLabel.text = [[EntryManager sharedManager] entryForToday].date;
+    _dateLabel.text = [[[DateFormatterManager sharedManager] formatWithMediumStyle] stringFromDate:[NSDate date]];
     _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager sharedManager] entryForToday].numberOfGlasses];
 }
 
