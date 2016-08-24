@@ -12,10 +12,15 @@
 
 @interface EntryManager : NSObject
 
+@property (nonatomic, strong) Entry *currentlySelectedEntry;
+
 + (instancetype)sharedManager;
 
 - (Entry *)entryForToday;
 - (Entry *)entryWithDate: (NSString *)date;
 - (void)saveData;
+
+- (void)addOneGlassToCurrentEntry;
+- (void)subtractOneGlassFromCurrentEntry;
 
 @end

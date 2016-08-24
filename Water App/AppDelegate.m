@@ -7,9 +7,8 @@
 //
 
 #import "AppDelegate.h"
-#import "MainTrackerViewController.h"
-#import "CalendarViewController.h"
 #import "MainViewController.h"
+#import "EntryManager.h"
 
 @interface AppDelegate ()
 
@@ -22,11 +21,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
-    CalendarViewController *cvc = [[CalendarViewController alloc] init];
     MainViewController *mvc = [[MainViewController alloc] init];
-    
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:cvc];
-    [cvc loadTrackerViewWithDate:[NSDate date] animated:NO];
     
     self.window.rootViewController = mvc;
     self.window.backgroundColor = [UIColor whiteColor];
@@ -42,6 +37,15 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    [[EntryManager sharedManager] saveData];
+    
+    //NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:@"Entry"];
+    //NSBatchDeleteRequest *delete = [[NSBatchDeleteRequest alloc] initWithFetchRequest:fetch];
+    
+    //NSError *error = nil;
+    //[self.persistentStoreCoordinator executeRequest:delete withContext:[self managedObjectContext] error:&error];
+    
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {

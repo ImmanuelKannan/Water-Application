@@ -18,7 +18,6 @@
 
 @property (nonatomic, strong) NSArray *fetchedObjects;
 @property (nonatomic, strong) NSEntityDescription *entityDescription;
-@property (nonatomic, strong) NSPredicate *predicate;
 
 @end
 
@@ -49,7 +48,10 @@
         
         _fetchedObjects = [[NSArray alloc] init];
         _entityDescription = [NSEntityDescription entityForName:@"Entry" inManagedObjectContext:self.context];
-        
+        _currentlySelectedEntry = [self entryWithDate:[[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]]];
+        if (_currentlySelectedEntry) {
+            NSLog(@"There is an entry selected");
+        }
     }
     
     return self;
@@ -58,10 +60,10 @@
 #pragma mark - Entry and entry manipulation methods
 
 - (Entry *)entryForToday {
-    return [self entryWithDate:[[[DateFormatterManager sharedManager] formatWithMediumStyle] stringFromDate:[NSDate date]]];
+    return [self entryWithDate:[[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]]];
 }
 
--(Entry *)entryWithDate: (NSString *)date {
+- (Entry *)entryWithDate: (NSString *)date {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -71,19 +73,24 @@
     
     NSError *error = nil;
     if ((self.fetchedObjects = [self.context executeFetchRequest:fetchRequest error:&error]).count == 1) {
-        NSLog(@"Object found");
-        return [self.fetchedObjects objectAtIndex:0];
+        NSLog(@"Entry with date: %@ found", date);
+        _currentlySelectedEntry = [self.fetchedObjects objectAtIndex:0];
+        return _currentlySelectedEntry;
     } else {
-        NSLog(@"Making a new object");
-        Entry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"Entry" inManagedObjectContext:self.context];
-        entry.date = date;
-        entry.numberOfGlasses = 0;
-        return entry;
+        NSLog(@"Creating new entry with date: %@", date);
+        _currentlySelectedEntry = [NSEntityDescription insertNewObjectForEntityForName:@"Entry" inManagedObjectContext:self.context];
+        _currentlySelectedEntry.date = date;
+        _currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:0];
+        return _currentlySelectedEntry;
     }
 }
 
-- (void)addOneGlassToEntry {
-    
+- (void)addOneGlassToCurrentEntry {
+    _currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:[_currentlySelectedEntry.numberOfGlasses intValue] + 1];
+}
+
+- (void)subtractOneGlassFromCurrentEntry {
+   _currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:[_currentlySelectedEntry.numberOfGlasses intValue] - 1];
 }
 
 
@@ -93,6 +100,15 @@
 - (NSManagedObjectContext *)getContext {
     NSManagedObjectContext *managedObjectContext = [(id)[[UIApplication sharedApplication] delegate] managedObjectContext];
     return managedObjectContext;
+}
+
+- (void)saveData {
+    NSError *error = nil;
+    if ([self.context save:&error] == NO)
+        NSLog(@"There has been an error");
+    else
+        NSLog(@"NSManagedObjectContext has been saved");
+    
 }
 
 @end

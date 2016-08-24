@@ -11,9 +11,13 @@
 
 @interface MainViewController : UIViewController <JTCalendarDelegate>
 
+//JTCalendar properties
 @property (nonatomic, weak) IBOutlet JTCalendarMenuView *calendarMenuView;
 @property (nonatomic, weak) IBOutlet JTHorizontalCalendarView *calendarContentView;
-
 @property (nonatomic, strong) JTCalendarManager *calendarManager;
+
+//XIB properties
+@property (nonatomic, strong) IBOutlet UILabel *dateLabel;
+@property (nonatomic, strong) IBOutlet UILabel *numberOfGlassesLabel;
 
 @end
