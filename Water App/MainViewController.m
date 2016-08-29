@@ -57,24 +57,22 @@
     _dateLabel.text = [[[DateFormatterManager sharedManager] formatWithMediumStyle] stringFromDate:dayView.date];
     _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", entry.numberOfGlasses];
     
-    NSLog(@"Currently Selected: %@", entry.date);
+    NSLog(@"Currently Selected: %@", dayView.date);
 }
 
 -(void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
+    dayView.hidden = NO;
     
-    //Makes dates from another month a light gray color
     if ([dayView isFromAnotherMonth]) {
-        dayView.textLabel.textColor = [UIColor lightGrayColor];
-    }
-    
-    //Gives todays date a red circular background
-    if ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]) {
+        dayView.hidden = YES;
+    } else if ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]) {
         dayView.circleView.hidden = NO;
-        dayView.circleView.backgroundColor = [UIColor redColor];
-        dayView.textLabel.textColor = [UIColor whiteColor];
+        dayView.circleView.backgroundColor = [UIColor blueColor];
+    } else {
+        dayView.circleView.hidden = YES;
+        dayView.textLabel.textColor = [UIColor blackColor];
+        
     }
-    
-    
 }
 
 #pragma mark - UI Methods
