@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -8,6 +8,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController">
             <connections>
                 <outlet property="calendarContentView" destination="lA4-Ib-jMy" id="La6-f9-U6x"/>
+                <outlet property="calendarContentViewHeight" destination="xLX-6s-M4m" id="aRQ-tO-IFB"/>
                 <outlet property="calendarMenuView" destination="0lp-Ag-AXr" id="NvS-UR-3LG"/>
                 <outlet property="dateLabel" destination="Rfr-SV-AsE" id="85p-Eh-RvD"/>
                 <outlet property="numberOfGlassesLabel" destination="S3L-Gb-C1I" id="FvW-1i-L80"/>
@@ -19,62 +20,98 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0lp-Ag-AXr" customClass="JTCalendarMenuView">
-                    <rect key="frame" x="8" y="46" width="584" height="42"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="dateLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rfr-SV-AsE">
                     <rect key="frame" x="262" y="417" width="76" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4l4-m7-cck">
-                    <rect key="frame" x="496" y="464" width="60" height="60"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4l4-m7-cck">
+                    <rect key="frame" x="520" y="474" width="50" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="50" id="koc-jh-Txr"/>
+                        <constraint firstAttribute="height" constant="50" id="uZc-Q8-kNG"/>
+                    </constraints>
                     <state key="normal" title="+"/>
                     <connections>
                         <action selector="incrementNumberOfGlasses" destination="-1" eventType="touchUpInside" id="CMV-Nl-s2f"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S3L-Gb-C1I">
-                    <rect key="frame" x="228" y="475" width="145" height="39"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S3L-Gb-C1I">
+                    <rect key="frame" x="228" y="474" width="145" height="50"/>
+                    <color key="backgroundColor" red="0.92147992045575233" green="0.94532722439876171" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="145" id="hxx-c7-CHl"/>
+                        <constraint firstAttribute="height" constant="50" id="rPb-ZV-U1g"/>
+                    </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="25"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lA4-Ib-jMy" customClass="JTHorizontalCalendarView">
-                    <rect key="frame" x="8" y="96" width="584" height="298"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </view>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dCw-57-BFk">
-                    <rect key="frame" x="37" y="464" width="60" height="60"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dCw-57-BFk">
+                    <rect key="frame" x="30" y="474" width="50" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="fqk-kC-tUq"/>
+                        <constraint firstAttribute="width" constant="50" id="ivU-5o-Phm"/>
+                    </constraints>
                     <state key="normal" title="-"/>
                     <connections>
                         <action selector="decrementNumberOfGlasses" destination="-1" eventType="touchUpInside" id="aGn-2C-1Xn"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Sp-dm-s9p">
+                    <rect key="frame" x="181" y="418" width="46" height="30"/>
+                    <state key="normal" title="Button"/>
+                    <connections>
+                        <action selector="didChangeMode" destination="-1" eventType="touchUpInside" id="khq-nA-Cbt"/>
+                    </connections>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lA4-Ib-jMy" customClass="JTHorizontalCalendarView">
+                    <rect key="frame" x="0.0" y="94" width="600" height="300"/>
+                    <color key="backgroundColor" red="0.99182474657796171" green="1" blue="0.66375614053636856" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="600" id="Xuz-Pw-SeW"/>
+                        <constraint firstAttribute="height" constant="300" id="xLX-6s-M4m"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0lp-Ag-AXr" customClass="JTCalendarMenuView">
+                    <rect key="frame" x="0.0" y="49" width="600" height="45"/>
+                    <color key="backgroundColor" red="0.76844633659598494" green="1" blue="0.64241575947942509" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="45" id="l0B-FF-uxd"/>
+                        <constraint firstAttribute="width" constant="600" id="nDf-G4-pCB"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="lA4-Ib-jMy" secondAttribute="bottom" constant="206" id="58b-ay-0vm"/>
-                <constraint firstItem="lA4-Ib-jMy" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="60p-bh-T9I"/>
-                <constraint firstItem="0lp-Ag-AXr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="BOD-hG-qFD"/>
-                <constraint firstItem="Rfr-SV-AsE" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="JGm-DN-CVN"/>
-                <constraint firstItem="4l4-m7-cck" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="464" id="L6O-vw-Cez"/>
-                <constraint firstItem="S3L-Gb-C1I" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="MeK-BU-jB3"/>
-                <constraint firstItem="lA4-Ib-jMy" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="96" id="O9Z-bc-e60"/>
-                <constraint firstItem="0lp-Ag-AXr" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="46" id="Q1L-FU-93P"/>
-                <constraint firstAttribute="trailing" secondItem="4l4-m7-cck" secondAttribute="trailing" constant="44" id="SCD-oZ-BqE"/>
-                <constraint firstItem="S3L-Gb-C1I" firstAttribute="top" secondItem="Rfr-SV-AsE" secondAttribute="bottom" constant="37" id="Vhg-FP-gEM"/>
-                <constraint firstAttribute="bottom" secondItem="0lp-Ag-AXr" secondAttribute="bottom" constant="512" id="Zj3-PC-LaD"/>
-                <constraint firstAttribute="trailing" secondItem="lA4-Ib-jMy" secondAttribute="trailing" constant="8" id="bLu-KJ-wqx"/>
-                <constraint firstItem="dCw-57-BFk" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="37" id="bNS-Vv-DIg"/>
-                <constraint firstItem="Rfr-SV-AsE" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="blN-fT-vaU"/>
-                <constraint firstAttribute="trailing" secondItem="0lp-Ag-AXr" secondAttribute="trailing" constant="8" id="iAa-Bc-Nzy"/>
-                <constraint firstAttribute="bottom" secondItem="Rfr-SV-AsE" secondAttribute="bottom" constant="162" id="nSX-tJ-Cav"/>
-                <constraint firstItem="dCw-57-BFk" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="464" id="qle-xV-lF2"/>
+                <constraint firstItem="Rfr-SV-AsE" firstAttribute="leading" secondItem="0Sp-dm-s9p" secondAttribute="trailing" constant="35" id="48J-J8-7PM"/>
+                <constraint firstItem="Rfr-SV-AsE" firstAttribute="top" secondItem="lA4-Ib-jMy" secondAttribute="bottom" constant="23" id="6Hf-Vk-7Cd"/>
+                <constraint firstItem="S3L-Gb-C1I" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="6b3-xN-Iaw"/>
+                <constraint firstAttribute="bottom" secondItem="S3L-Gb-C1I" secondAttribute="bottom" constant="76" id="81c-46-OYf"/>
+                <constraint firstItem="dCw-57-BFk" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="30" id="8fA-zu-vjW"/>
+                <constraint firstItem="S3L-Gb-C1I" firstAttribute="top" secondItem="Rfr-SV-AsE" secondAttribute="bottom" constant="36" id="B09-lG-mZD"/>
+                <constraint firstItem="4l4-m7-cck" firstAttribute="leading" secondItem="S3L-Gb-C1I" secondAttribute="trailing" constant="147" id="Gfl-e5-k9f"/>
+                <constraint firstItem="lA4-Ib-jMy" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="O8F-59-H4I"/>
+                <constraint firstItem="S3L-Gb-C1I" firstAttribute="leading" secondItem="dCw-57-BFk" secondAttribute="trailing" constant="148" id="OJ0-Ai-ofR"/>
+                <constraint firstAttribute="bottom" secondItem="dCw-57-BFk" secondAttribute="bottom" constant="76" id="Org-Hf-ph6"/>
+                <constraint firstAttribute="trailing" secondItem="0lp-Ag-AXr" secondAttribute="trailing" id="VUu-CT-Jrh"/>
+                <constraint firstItem="0lp-Ag-AXr" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="49" id="eiF-Kd-qgk"/>
+                <constraint firstItem="Rfr-SV-AsE" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="gCK-7k-L9a"/>
+                <constraint firstItem="0lp-Ag-AXr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="gwt-Oy-lrx"/>
+                <constraint firstItem="lA4-Ib-jMy" firstAttribute="top" secondItem="0lp-Ag-AXr" secondAttribute="bottom" id="rx4-RH-KdA"/>
+                <constraint firstItem="lA4-Ib-jMy" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="u8J-kr-Bqc"/>
+                <constraint firstAttribute="bottom" secondItem="4l4-m7-cck" secondAttribute="bottom" constant="76" id="u9u-df-V1m"/>
+                <constraint firstAttribute="trailing" secondItem="lA4-Ib-jMy" secondAttribute="trailing" id="xYf-53-Tca"/>
+                <constraint firstAttribute="trailing" secondItem="4l4-m7-cck" secondAttribute="trailing" constant="30" id="z47-Ng-Xf7"/>
             </constraints>
-            <point key="canvasLocation" x="-25" y="419"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="OJ0-Ai-ofR"/>
+                    <exclude reference="Gfl-e5-k9f"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="-40" y="333"/>
         </view>
     </objects>
 </document>
