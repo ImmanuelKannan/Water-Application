@@ -18,14 +18,13 @@
 @property (nonatomic, strong) NSArray *fetchedObjects;
 @property (nonatomic, strong) NSEntityDescription *entityDescription;
 @property (nonatomic, strong) NSFetchRequest *fetchRequest;
-@property (nonatomic, strong) NSPredicate *predicate;
 
 @end
 
 
 @implementation EntryManager
 
-#pragma mark - Constructor & Initializer Methods
+#pragma mark - Initializer Methods
 
 + (instancetype)sharedManager {
     static EntryManager *entryManager = nil;
@@ -54,13 +53,6 @@
         _fetchRequest.fetchLimit = 1;
         
         [EntryManager populateEntryCache];
-        
-        /*
-        _currentlySelectedEntry = [self entryWithDate:[[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]]];
-        if (_currentlySelectedEntry) {
-            NSLog(@"Entry Manager: Currently selected entry is %@", _currentlySelectedEntry);
-        }
-        */
     }
     
     return self;
@@ -87,6 +79,7 @@
 }
 
 - (Entry *)entryWithDate: (NSString *)date {
+    /*
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
     [_fetchRequest setPredicate:predicate];
     
@@ -99,6 +92,23 @@
         return entry;
     } else {
         NSLog(@"Entry Manager: Entry with date: %@ not found", date);
+        return nil;
+    }
+     */
+    
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"date == %@", date];
+    NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:@"Entry"];
+    fetch.predicate = pred;
+    
+    NSArray *arr;
+    
+    NSError *err = nil;
+    if ((arr = [self.context executeFetchRequest:fetch error:&err]).count == 1) {
+        NSLog(@"Entry Manager, (-entryWithDate): Entry with date %@ found", date);
+        Entry *entry = [arr firstObject];
+        return entry;
+    } else {
+        NSLog(@"Entry Manager, (-entryWithDate): Entry with date %@ NOT found", date);
         return nil;
     }
 }
@@ -169,15 +179,13 @@ static Entry *currentEntry = nil;
 
 + (void)setCurrentEntry: (NSString *)date {
     
-    if ([[EntryManager sharedManager] entryWithDate:date]) {
-        currentEntry = [[EntryManager sharedManager] entryWithDate:date];
-    } else {
-        currentEntry.date = date;
-        currentEntry.numberOfGlasses = 0;
+    if ((currentEntry = [[EntryManager sharedManager] entryWithDate:date])) {
+        NSLog(@"Cureent Entry: %@", currentEntry);
     }
     
-    if (date) {
-        currentEntry = [[EntryManager sharedManager] entryWithDate:date];
+    else {
+        currentEntry.date = date;
+        currentEntry.numberOfGlasses = 0;
     }
     
 }
