@@ -40,11 +40,22 @@
     
     [[EntryManager sharedManager] saveData];
     
-    //NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:@"Entry"];
-    //NSBatchDeleteRequest *delete = [[NSBatchDeleteRequest alloc] initWithFetchRequest:fetch];
     
-    //NSError *error = nil;
-    //[self.persistentStoreCoordinator executeRequest:delete withContext:[self managedObjectContext] error:&error];
+//    Use (cmd + /) to comment/uncomment blocks of code
+//
+//    NSFetchRequest *fetch = [NSFetchRequest fetchRequestWithEntityName:@"Entry"];
+//    NSBatchDeleteRequest *delete = [[NSBatchDeleteRequest alloc] initWithFetchRequest:fetch];
+//    
+//    NSError *error = nil;
+//    [self.persistentStoreCoordinator executeRequest:delete withContext:[self managedObjectContext] error:&error];
+//    
+//    NSError *error2 = nil;
+//    NSUInteger count = [_managedObjectContext countForFetchRequest:fetch error:&error2];
+//    
+//    if (!error2)
+//        NSLog(@"There are %lu objects in core data", (unsigned long)count);
+//    else
+//        NSLog(@"There are 0 objects in core data");
     
 }
 
