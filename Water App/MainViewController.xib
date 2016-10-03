@@ -14,6 +14,7 @@
                 <outlet property="dateLabel" destination="Rfr-SV-AsE" id="85p-Eh-RvD"/>
                 <outlet property="menuYPosition" destination="eiF-Kd-qgk" id="71a-dY-lJp"/>
                 <outlet property="minusButtonYPosition" destination="Org-Hf-ph6" id="EqA-HH-ySN"/>
+                <outlet property="navigationBar" destination="OZg-iA-WE5" id="RiX-eo-EiJ"/>
                 <outlet property="navigationBarHeight" destination="9hu-Xz-uqS" id="cFP-mj-jbz"/>
                 <outlet property="numberOfGlassesLabel" destination="S3L-Gb-C1I" id="FvW-1i-L80"/>
                 <outlet property="numberOfGlassesLabelYPosition" destination="81c-46-OYf" id="Zoc-aP-jGc"/>
@@ -113,7 +114,7 @@
                 <constraint firstAttribute="trailing" secondItem="lA4-Ib-jMy" secondAttribute="trailing" id="xYf-53-Tca"/>
                 <constraint firstAttribute="trailing" secondItem="4l4-m7-cck" secondAttribute="trailing" constant="30" id="z47-Ng-Xf7"/>
             </constraints>
-            <point key="canvasLocation" x="-68" y="296"/>
+            <point key="canvasLocation" x="-478" y="297"/>
         </view>
     </objects>
 </document>
