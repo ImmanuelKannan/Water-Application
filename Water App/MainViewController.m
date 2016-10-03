@@ -30,6 +30,8 @@ static const CGFloat kWeekViewComponents = 76;
 //XIB properties
 @property (nonatomic, strong) IBOutlet UILabel *dateLabel;
 @property (nonatomic, strong) IBOutlet UILabel *numberOfGlassesLabel;
+@property (strong, nonatomic) IBOutlet UINavigationBar *navigationBar;
+
 
 //XIB constraints
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *minusButtonYPosition;
@@ -43,8 +45,6 @@ static const CGFloat kWeekViewComponents = 76;
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeUpRecognizer;
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeDownRecognizer;
 
-@property (nonatomic, strong) NSDictionary *entryCache;
-
 @end
 
 
@@ -57,7 +57,6 @@ static const CGFloat kWeekViewComponents = 76;
 
 - (instancetype)init {
     if (self = [super init]) {
-        _entryCache = [[NSDictionary alloc] init];
     }
     
     return self;
@@ -70,7 +69,7 @@ static const CGFloat kWeekViewComponents = 76;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.navigationItem.title = @"Progress";
+    self.navigationBar.topItem.title = @"Progress";
     
     [self setupCalendar];
     
@@ -100,8 +99,7 @@ static const CGFloat kWeekViewComponents = 76;
     }
     
     else {
-        [EntryManager setCurrentEntry:nil];
-        
+        [EntryManager setCurrentEntry:dateString];
         _dateLabel.text = dateString;
         _numberOfGlassesLabel.text = @"No Entry";
     }
