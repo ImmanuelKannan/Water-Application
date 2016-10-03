@@ -11,18 +11,58 @@
 #import "EntryManager.h"
 #import "Entry.h"
 
+#pragma mark - Constants
+
+static const CGFloat kCalendarContentViewHeightInWeekView = 80;
+static const CGFloat kCalendarContentViewHeightInMonthView = 280;
+
+static const CGFloat kWeekViewComponents = 76; 
+
+#pragma mark - Class Extension
+
 @interface MainViewController ()
+
+//JTCalendar properties
+@property (nonatomic, weak) IBOutlet JTCalendarMenuView *calendarMenuView;
+@property (nonatomic, weak) IBOutlet JTHorizontalCalendarView *calendarContentView;
+@property (nonatomic, strong) JTCalendarManager *calendarManager;
+
+//XIB properties
+@property (nonatomic, strong) IBOutlet UILabel *dateLabel;
+@property (nonatomic, strong) IBOutlet UILabel *numberOfGlassesLabel;
+
+//XIB constraints
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *minusButtonYPosition;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *plusButtonYPosition;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *numberOfGlassesLabelYPosition;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *navigationBarHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarContentViewHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *menuYPosition;
+
+//Gesture Recognizers
+@property (nonatomic, strong) UISwipeGestureRecognizer *swipeUpRecognizer;
+@property (nonatomic, strong) UISwipeGestureRecognizer *swipeDownRecognizer;
+
+@property (nonatomic, strong) NSDictionary *entryCache;
 
 @end
 
+
+#pragma mark - Class Implementation
+
 @implementation MainViewController
+
+
+#pragma mark - Initializers
 
 - (instancetype)init {
     if (self = [super init]) {
+        _entryCache = [[NSDictionary alloc] init];
     }
     
     return self;
 }
+
 
 #pragma mark - View Controller Lifecycle Methods
 
@@ -30,30 +70,19 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    _calendarManager = [JTCalendarManager new];
-    _calendarManager.delegate = self;
+    self.navigationItem.title = @"Progress";
     
-    [_calendarManager setMenuView:_calendarMenuView];
-    [_calendarManager setContentView:_calendarContentView];
-    [_calendarManager setDate:[NSDate date]];
+    [self setupCalendar];
     
-    //Sets initial values for _dateLabel and _numberOfGlassesLabel
-    _dateLabel.text = [[[DateFormatterManager sharedManager] formatWithMediumStyle] stringFromDate:[NSDate date]];
-    _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager sharedManager] entryForToday].numberOfGlasses];
+    [EntryManager setCurrentEntry:[[DateFormatterManager sharedManager] todayString]];
     
-    _swipeUpRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUp:)];
-    _swipeUpRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
+    _dateLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].date];
+    _numberOfGlassesLabel.text = [self setNumberOfGlassesLabelText:[EntryManager currentEntry]];
     
-    _swipeDownRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDown:)];
-    _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     
-    [self.view addGestureRecognizer:_swipeUpRecognizer];
-    [self.view addGestureRecognizer:_swipeDownRecognizer];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    //Sets up the gesture recognizers and adds them to the view
+    [self setupGestureRecognizers];
+    
 }
 
 
@@ -61,85 +90,129 @@
 
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:dayView.date];
-    Entry *entry = [[EntryManager sharedManager] entryWithDate:dateString];
+    Entry *entry = [[EntryManager entryCache] objectForKey:dateString];
     
-    _dateLabel.text = [[[DateFormatterManager sharedManager] formatWithMediumStyle] stringFromDate:dayView.date];
-    _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", entry.numberOfGlasses];
+    if (entry) {
+        [EntryManager setCurrentEntry:dateString];
+        
+        _dateLabel.text = [[EntryManager currentEntry] date];
+        _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
+    }
     
-    NSLog(@"Currently Selected: %@", dayView.date);
+    else {
+        [EntryManager setCurrentEntry:nil];
+        
+        _dateLabel.text = dateString;
+        _numberOfGlassesLabel.text = @"No Entry";
+    }
 }
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     
-    dayView.hidden = NO;
+    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:dayView.date];
+    Entry *entry = [[EntryManager entryCache] objectForKey:dateString];
     
-    if ([dayView isFromAnotherMonth]) {
-        dayView.hidden = YES;
-    } else if ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]) {
+    dayView.hidden = NO;
+    dayView.circleView.hidden = YES;
+    
+    //Tests if dayView.date is the same day as today
+    if ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]) {
         dayView.circleView.hidden = NO;
-        dayView.circleView.backgroundColor = [UIColor colorWithRed:0. green:231. blue:255. alpha:1];
-    } else {
+        dayView.circleView.backgroundColor = [UIColor orangeColor];
+    }
+    
+    //Tests if an entry exists for dayView.date and if it's today's date
+    else if (entry && ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date] == NO)) {
+        dayView.circleView.hidden = NO;
+        dayView.textLabel.textColor = [UIColor whiteColor];
+        
+        switch ([entry.numberOfGlasses intValue]) {
+            case 1:
+                dayView.circleView.backgroundColor = [UIColor colorWithRed:133.0f/255.0f
+                                                                     green:149.0f/255.0f
+                                                                      blue:255.0f/255.0f
+                                                                     alpha:1.0f];
+                break;
+            case 2:
+                dayView.circleView.backgroundColor = [UIColor colorWithRed:74.0f/255.0f
+                                                                     green:98.0f/255.0f
+                                                                      blue:255.0f/255.0f
+                                                                     alpha:1.0f];
+                break;
+            case 3:
+                dayView.circleView.backgroundColor = [UIColor colorWithRed:23.0f/255.0f
+                                                                     green:53.0f/255.0f
+                                                                      blue:252.0f/255.0f
+                                                                     alpha:1.0f];
+                break;
+            default:
+                dayView.circleView.backgroundColor = [UIColor greenColor];
+                break;
+        }
+    }
+    
+    //Tests if dayView.date is from another month and if an entry exists
+    else if ([dayView isFromAnotherMonth] && (entry == NO)) {
+        dayView.textLabel.textColor = [UIColor grayColor];
+    }
+    
+    //Sets default appearance for every other dayView
+    else {
         dayView.circleView.hidden = YES;
         dayView.textLabel.textColor = [UIColor blackColor];
-        
     }
-     
+    
 }
+-(UIView<JTCalendarDay> *)calendarBuildDayView:(JTCalendarManager *)calendar {
+    JTCalendarDayView *view = [JTCalendarDayView new];
+    view.textLabel.font = [UIFont fontWithName:@"Avenir-Light" size:13];
+    
+    return view;
+}
+
+
+-(UIView *)calendarBuildMenuItemView:(JTCalendarManager *)calendar {
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 200, 300, 100)];
+    
+    label.textColor = [UIColor redColor];
+    label.textAlignment = NSTextAlignmentCenter;
+    
+    return label;
+}
+
 
 #pragma mark - UI Methods
 
-- (IBAction)incrementNumberOfGlasses {
+- (IBAction)addOneToNumberOfGlassesButtonWasPressed {
     [[EntryManager sharedManager] addOneGlassToCurrentEntry];
-    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager sharedManager].currentlySelectedEntry.numberOfGlasses];
+    //self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager sharedManager].currentlySelectedEntry.numberOfGlasses];
+    
+    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+    [_calendarManager reload];
 }
 
-- (IBAction)decrementNumberOfGlasses {
+- (IBAction)subtractOneFromNumberOfGlassesButtonWasPressed {
     [[EntryManager sharedManager] subtractOneGlassFromCurrentEntry];
-    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager sharedManager].currentlySelectedEntry.numberOfGlasses];
+    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+    [_calendarManager reload];
 }
+
+- (NSString *)setNumberOfGlassesLabelText: (Entry *)entry {
+    NSString *numberOfGlassesText;
+    
+    if (entry) {
+        numberOfGlassesText = [NSString stringWithFormat:@"%@", entry.numberOfGlasses];
+        return numberOfGlassesText;
+    }
+    
+    else {
+        numberOfGlassesText = @"No Entry Found";
+        return numberOfGlassesText;
+    }
+}
+
 
 #pragma mark - Gesture Recognizer Methods
-
-- (void)didChangeMode: (UISwipeGestureRecognizer *)sender {
-    
-    /*
-    _calendarManager.settings.weekModeEnabled = !_calendarManager.settings.weekModeEnabled;
-   
-    
-    
-    [_calendarManager reload];
-    
-    CGFloat newHeight = 300;
-    if (_calendarManager.settings.weekModeEnabled) {
-        newHeight = 80;
-    }
-    
-    self.calendarContentViewHeight.constant = newHeight;
-    [self.view layoutIfNeeded];
-     
-     */
-    
-    /*
-    [_calendarManager reload];
-
-    CGFloat fullSizeHeight = 300;
-    CGFloat weekSizeHeight = 80;
-    
-    if (sender.direction == UISwipeGestureRecognizerDirectionUp && _calendarManager.settings.weekModeEnabled == NO) {
-        _calendarManager.settings.weekModeEnabled = YES;
-        
-        self.calendarContentViewHeight.constant = weekSizeHeight;
-        [self.view layoutIfNeeded];
-    }
-    
-    if (sender.direction == UISwipeGestureRecognizerDirectionDown && _calendarManager.settings.weekModeEnabled == YES) {
-        _calendarManager.settings.weekModeEnabled = NO;
-        
-        self.calendarContentViewHeight.constant = fullSizeHeight;
-        [self.view layoutIfNeeded];
-    }
-    */
-}
 
 - (void)swipeUp: (UISwipeGestureRecognizer *)sender {
     
@@ -148,7 +221,19 @@
         [_calendarManager reload];
     }
     
-    self.calendarContentViewHeight.constant = 80;
+    self.calendarContentViewHeight.constant = kCalendarContentViewHeightInWeekView;
+    
+    if (_calendarContentViewHeight.constant == kCalendarContentViewHeightInWeekView) {
+        [UIView animateWithDuration:.5f animations:^void {
+            _minusButtonYPosition.constant = 76.;
+            _numberOfGlassesLabelYPosition.constant = 76.;
+            _plusButtonYPosition.constant = 76.;
+            _navigationBarHeight.constant = -64;
+            _menuYPosition.constant = 70;
+            
+            [self.view layoutIfNeeded];
+        }];
+    }
 }
 
 - (void)swipeDown: (UISwipeGestureRecognizer *)sender {
@@ -157,7 +242,42 @@
         [_calendarManager reload];
     }
     
-    self.calendarContentViewHeight.constant = 300;
+    self.calendarContentViewHeight.constant = kCalendarContentViewHeightInMonthView;
+    
+    if (_calendarContentViewHeight.constant == kCalendarContentViewHeightInMonthView) {
+        
+        [UIView animateWithDuration:.5f animations:^void {
+            
+            _numberOfGlassesLabelYPosition.constant = -100.;
+            _navigationBarHeight.constant = 0;
+            _plusButtonYPosition.constant = -100.;
+            _minusButtonYPosition.constant = -100.;
+            _menuYPosition.constant = 110;
+            
+
+            [self.view layoutIfNeeded];
+        }];
+    }
+}
+
+- (void)setupCalendar {
+    _calendarManager = [JTCalendarManager new];
+    _calendarManager.delegate = self;
+    
+    [_calendarManager setMenuView:_calendarMenuView];
+    [_calendarManager setContentView:_calendarContentView];
+    [_calendarManager setDate:[NSDate date]];
+}
+
+- (void)setupGestureRecognizers {
+    _swipeUpRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUp:)];
+    _swipeUpRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
+    
+    _swipeDownRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDown:)];
+    _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+    
+    [self.view addGestureRecognizer:_swipeUpRecognizer];
+    [self.view addGestureRecognizer:_swipeDownRecognizer];
 }
 
 /*

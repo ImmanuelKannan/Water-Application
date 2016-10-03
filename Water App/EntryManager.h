@@ -16,11 +16,22 @@
 
 + (instancetype)sharedManager;
 
++ (Entry *)currentEntry;
++ (void)setCurrentEntry: (NSString *)date;
+
 - (Entry *)entryForToday;
 - (Entry *)entryWithDate: (NSString *)date;
-- (void)saveData;
+
+- (Entry *)createEntryForDate: (NSString *)date;
 
 - (void)addOneGlassToCurrentEntry;
 - (void)subtractOneGlassFromCurrentEntry;
 
+
+
++ (void)populateEntryCache;
++ (NSMutableDictionary *)entryCache;
+
++ (NSManagedObjectContext *)getContext;
+- (void)saveData;
 @end

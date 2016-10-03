@@ -201,10 +201,6 @@
 			children = (
 				18D5AB5C1D62153300FA01FE /* MainViewController.h */,
 				18D5AB5D1D62153300FA01FE /* MainViewController.m */,
-				1814B60A1D5DAB6100286822 /* EntryManager.h */,
-				1814B60B1D5DAB6100286822 /* EntryManager.m */,
-				18843A951D60AA6A00856F67 /* DateFormatterManager.h */,
-				18843A961D60AA6A00856F67 /* DateFormatterManager.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -216,6 +212,10 @@
 				1814B6051D5DAACC00286822 /* Entry+CoreDataProperties.m */,
 				1814B6061D5DAACC00286822 /* Entry.h */,
 				1814B6071D5DAACC00286822 /* Entry.m */,
+				1814B60A1D5DAB6100286822 /* EntryManager.h */,
+				1814B60B1D5DAB6100286822 /* EntryManager.m */,
+				18843A951D60AA6A00856F67 /* DateFormatterManager.h */,
+				18843A961D60AA6A00856F67 /* DateFormatterManager.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";

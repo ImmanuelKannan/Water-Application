@@ -13,6 +13,7 @@
 @property (nonatomic, strong) NSDateFormatter *shortDateFormatter;
 @property (nonatomic, strong) NSDateFormatter *formatWithMediumStyle;
 @property (nonatomic, strong) NSDateFormatter *formatForEntryDate;
+@property (nonatomic, strong) NSString *todayString;
 
 @end
 
@@ -59,6 +60,12 @@
     _formatForEntryDate.dateFormat = @"yyyy-MM-dd";
     
     return _formatForEntryDate;
+}
+
+- (NSString *)todayString {
+    _todayString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]];
+    
+    return _todayString;
 }
 
 @end

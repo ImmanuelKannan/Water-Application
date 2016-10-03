@@ -15,4 +15,6 @@
 - (NSDateFormatter *)formatWithMediumStyle;
 - (NSDateFormatter *)formatForEntryDate;
 
+- (NSString *)todayString;
+
 @end

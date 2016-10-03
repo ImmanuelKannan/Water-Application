@@ -8,7 +8,6 @@ target 'Water App' do
   # Pods for Water App
 
   pod ‘JTCalendar’, ‘~> 2.0’
-
   target 'Water AppTests' do
     inherit! :search_paths
     # Pods for testing

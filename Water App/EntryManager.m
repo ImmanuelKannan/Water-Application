@@ -11,13 +11,14 @@
 #import "DateFormatterManager.h"
 #import "UIKit/UIKit.h"
 
-
 @interface EntryManager ()
 
 @property (nonatomic, strong) NSManagedObjectContext *context;
 
 @property (nonatomic, strong) NSArray *fetchedObjects;
 @property (nonatomic, strong) NSEntityDescription *entityDescription;
+@property (nonatomic, strong) NSFetchRequest *fetchRequest;
+@property (nonatomic, strong) NSPredicate *predicate;
 
 @end
 
@@ -39,7 +40,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.context = [self getContext];
+        self.context = [EntryManager getContext];
         if (_context) {
             NSLog(@"NSManagedObjectContext is initialized");
         } else {
@@ -48,10 +49,18 @@
         
         _fetchedObjects = [[NSArray alloc] init];
         _entityDescription = [NSEntityDescription entityForName:@"Entry" inManagedObjectContext:self.context];
+        _fetchRequest = [[NSFetchRequest alloc] init];
+        _fetchRequest.entity = _entityDescription;
+        _fetchRequest.fetchLimit = 1;
+        
+        [EntryManager populateEntryCache];
+        
+        /*
         _currentlySelectedEntry = [self entryWithDate:[[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]]];
         if (_currentlySelectedEntry) {
-            NSLog(@"There is an entry selected");
+            NSLog(@"Entry Manager: Currently selected entry is %@", _currentlySelectedEntry);
         }
+        */
     }
     
     return self;
@@ -60,10 +69,50 @@
 #pragma mark - Entry and entry manipulation methods
 
 - (Entry *)entryForToday {
-    return [self entryWithDate:[[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]]];
+    /*
+        Checks if an entry exists for today. 
+        If an entry does exist, set it as the currentEntry, and return it. Otherwise, create a new entry,
+        set it as the currentEntry, and return it.
+     */
+    
+    Entry *entry;
+    if ((entry = [self entryWithDate:[[DateFormatterManager sharedManager] todayString]])) {
+        [EntryManager setCurrentEntry:[[DateFormatterManager sharedManager] todayString]];
+        return entry;
+    } else {
+        entry = [self createEntryForDate:[[DateFormatterManager sharedManager] todayString]];
+        [EntryManager setCurrentEntry:[[DateFormatterManager sharedManager] todayString]];
+        return entry;
+    }
 }
 
 - (Entry *)entryWithDate: (NSString *)date {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
+    [_fetchRequest setPredicate:predicate];
+    
+    Entry *entry;
+    
+    NSError *error = nil;
+    if ((self.fetchedObjects = [self.context executeFetchRequest:_fetchRequest error:&error]).count == 1) {
+        NSLog(@"Entry Manager: Entry with date: %@ found", date);
+        entry = [self.fetchedObjects objectAtIndex:0];
+        return entry;
+    } else {
+        NSLog(@"Entry Manager: Entry with date: %@ not found", date);
+        return nil;
+    }
+}
+
+- (Entry *)createEntryForDate: (NSString *)date {
+    Entry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"Entry" inManagedObjectContext:self.context];
+    [entry setValue:date forKey:@"date"];
+    [entry setValue:[NSNumber numberWithInt:0] forKey:@"numberOfGlasses"];
+    
+    return entry;
+}
+
+
+- (BOOL)entryWithDateDoesExist: (NSString *)date {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -71,33 +120,34 @@
     [fetchRequest setPredicate:predicate];
     [fetchRequest setFetchLimit:1];
     
+    
     NSError *error = nil;
-    if ((self.fetchedObjects = [self.context executeFetchRequest:fetchRequest error:&error]).count == 1) {
-        NSLog(@"Entry with date: %@ found", date);
-        _currentlySelectedEntry = [self.fetchedObjects objectAtIndex:0];
-        return _currentlySelectedEntry;
+    NSUInteger count = [self.context countForFetchRequest:fetchRequest error:&error];
+    
+    if (count == 0) {
+        NSLog(@"Error: %@", error);
+        return NO;
     } else {
-        NSLog(@"Creating new entry with date: %@", date);
-        _currentlySelectedEntry = [NSEntityDescription insertNewObjectForEntityForName:@"Entry" inManagedObjectContext:self.context];
-        _currentlySelectedEntry.date = date;
-        _currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:0];
-        return _currentlySelectedEntry;
+        return YES;
     }
+    
 }
 
 - (void)addOneGlassToCurrentEntry {
-    _currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:[_currentlySelectedEntry.numberOfGlasses intValue] + 1];
+    //_currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:[_currentlySelectedEntry.numberOfGlasses intValue] + 1];
+    currentEntry.numberOfGlasses = [NSNumber numberWithInt:[currentEntry.numberOfGlasses intValue] + 1];
 }
 
 - (void)subtractOneGlassFromCurrentEntry {
-   _currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:[_currentlySelectedEntry.numberOfGlasses intValue] - 1];
+   //_currentlySelectedEntry.numberOfGlasses = [NSNumber numberWithInt:[_currentlySelectedEntry.numberOfGlasses intValue] - 1];
+    currentEntry.numberOfGlasses = [NSNumber numberWithInt:[currentEntry.numberOfGlasses intValue] - 1];
 }
 
 
 #pragma mark - Core Data Methods
 
 //Returns UIApplication's NSManagedObjectContext
-- (NSManagedObjectContext *)getContext {
++ (NSManagedObjectContext *)getContext {
     NSManagedObjectContext *managedObjectContext = [(id)[[UIApplication sharedApplication] delegate] managedObjectContext];
     return managedObjectContext;
 }
@@ -110,5 +160,88 @@
         NSLog(@"NSManagedObjectContext has been saved");
     
 }
+
+static Entry *currentEntry = nil;
+
++ (Entry *)currentEntry {
+    return currentEntry;
+}
+
++ (void)setCurrentEntry: (NSString *)date {
+    
+    if ([[EntryManager sharedManager] entryWithDate:date]) {
+        currentEntry = [[EntryManager sharedManager] entryWithDate:date];
+    } else {
+        currentEntry.date = date;
+        currentEntry.numberOfGlasses = 0;
+    }
+    
+    if (date) {
+        currentEntry = [[EntryManager sharedManager] entryWithDate:date];
+    }
+    
+}
+
+static NSMutableDictionary *entryCache = nil;
+
++ (NSMutableDictionary *)entryCache {
+    if (entryCache == nil) {
+        [EntryManager populateEntryCache];
+        return entryCache;
+    } else {
+        return entryCache;
+    }
+}
+
++ (void)populateEntryCache {
+    entryCache = [[NSMutableDictionary alloc] init];
+    NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:@"Entry"];
+    
+    NSError *err = nil;
+    NSArray *array = [[self getContext] executeFetchRequest:fetch error:&err];
+    
+    if (err != nil) {
+        
+        NSLog(@"ENTRY MANAGER, (- cache): FETCH FAILED");
+        
+    }
+    else {
+        
+        for (NSManagedObject *entry in array) {
+            [entryCache setObject:entry forKey:[NSString stringWithFormat:@"%@", ((Entry *) entry).date]];
+        }
+        
+    }
+    
+}
+
+/*
+- (NSMutableDictionary *)cache {
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:@"Entry"];
+    
+    NSError *err = nil;
+    NSArray *array = [_context executeFetchRequest:fetch error:&err];
+    
+    if (err != nil) {
+        
+        NSLog(@"ENTRY MANAGER, (- cache): FETCH FAILED");
+        
+    }
+    else {
+        
+        for (NSManagedObject *entry in array) {
+            [dictionary setObject:entry forKey:[NSString stringWithFormat:@"%@", ((Entry *) entry).date]];
+        }
+        
+    }
+    
+    for (NSString *key in [dictionary allKeys]) {
+        NSLog(@"CACHE THIS: %@", [dictionary objectForKey:key]);
+    }
+    
+    return dictionary;
+}
+ */
 
 @end
