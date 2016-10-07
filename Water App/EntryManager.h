@@ -12,10 +12,13 @@
 
 @interface EntryManager : NSObject
 
+@property (nonatomic, strong) NSManagedObjectContext *temporaryContext;
+
 + (instancetype)sharedManager;
 
 - (Entry *)entryForToday;
 - (Entry *)entryWithDate: (NSString *)date;
+- (Entry *)createEntryForDate: (NSString *)date;
 
 + (Entry *)currentEntry;
 + (void)setCurrentEntry: (NSString *)date;
