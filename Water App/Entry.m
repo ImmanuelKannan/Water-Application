@@ -12,4 +12,10 @@
 
 // Insert code here to add functionality to your managed object subclass
 
+- (NSString *)description {
+    NSString *description = [NSString stringWithFormat:@"Date: %@, Number of Glasses: %@", self.date, self.numberOfGlasses];
+    
+    return description;
+}
+
 @end

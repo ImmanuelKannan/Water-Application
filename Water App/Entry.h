@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Insert code here to declare functionality of your managed object subclass
 
+- (NSString *)description;
+
 @end
 
 NS_ASSUME_NONNULL_END
