@@ -73,7 +73,7 @@ static const CGFloat kWeekViewComponents = 76;
     
     [self setupCalendar];
     
-    [EntryManager setCurrentEntry:[[DateFormatterManager sharedManager] todayString]];
+    [[EntryManager sharedManager] entryForToday];
     
     _dateLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].date];
     _numberOfGlassesLabel.text = [self setNumberOfGlassesLabelText:[EntryManager currentEntry]];
@@ -89,19 +89,33 @@ static const CGFloat kWeekViewComponents = 76;
 
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:dayView.date];
-    Entry *entry = [[EntryManager entryCache] objectForKey:dateString];
     
-    if (entry) {
-        [EntryManager setCurrentEntry:dateString];
-        
+    [EntryManager setCurrentEntry:dateString];
+    _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
+    
+    if ([EntryManager currentEntry]) {
         _dateLabel.text = [[EntryManager currentEntry] date];
-        _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
+    } else {
+        _dateLabel.text = dateString;
     }
     
-    else {
-        [EntryManager setCurrentEntry:dateString];
-        _dateLabel.text = dateString;
-        _numberOfGlassesLabel.text = @"No Entry";
+//    if (entry) {
+//        [EntryManager setCurrentEntry:dateString];
+//        
+//        _dateLabel.text = [[EntryManager currentEntry] date];
+//        _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
+//    }
+//    
+//    else {
+//        [EntryManager setCurrentEntry:dateString];
+////        _dateLabel.text = dateString;
+////        _numberOfGlassesLabel.text = @"No Entry";
+//        _dateLabel.text = dateString;
+//        _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+//    }
+    
+    for (NSString *key in [[EntryManager entryCache] allKeys]) {
+        NSLog(@"IN CACHE: %@", [[[EntryManager entryCache] objectForKey:key] description]);
     }
 }
 
@@ -182,16 +196,44 @@ static const CGFloat kWeekViewComponents = 76;
 #pragma mark - UI Methods
 
 - (IBAction)addOneToNumberOfGlassesButtonWasPressed {
-    [[EntryManager sharedManager] addOneGlassToCurrentEntry];
-    //self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager sharedManager].currentlySelectedEntry.numberOfGlasses];
+//    [[EntryManager sharedManager] addOneGlassToCurrentEntry];
+//    //self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager sharedManager].currentlySelectedEntry.numberOfGlasses];
+//    
+//    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+//    [_calendarManager reload];
     
-    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+    if ([EntryManager currentEntry] == nil) {
+        [[EntryManager sharedManager] createEntryForDate:_dateLabel.text];
+        [EntryManager setCurrentEntry:_dateLabel.text];
+        
+        [[EntryManager sharedManager] addOneGlassToCurrentEntry];
+        self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+//        self.dateLabel.text = [EntryManager currentEntry].date;
+        
+    }
+    
+    else {
+        [[EntryManager sharedManager] addOneGlassToCurrentEntry];
+        self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+//        self.dateLabel.text = [EntryManager currentEntry].date;
+        
+    }
+    
     [_calendarManager reload];
 }
 
 - (IBAction)subtractOneFromNumberOfGlassesButtonWasPressed {
     [[EntryManager sharedManager] subtractOneGlassFromCurrentEntry];
     self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+    
+    if ([[EntryManager currentEntry].numberOfGlasses isEqualToNumber:[NSNumber numberWithInt:0]]) {
+        NSLog(@"LOL");
+        [[EntryManager entryCache] removeObjectForKey:[EntryManager currentEntry].date];
+        [[EntryManager getContext] deleteObject:[EntryManager currentEntry]];
+        [EntryManager setCurrentEntry:nil];
+        
+    }
+    
     [_calendarManager reload];
 }
 
