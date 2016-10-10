@@ -1,0 +1,15 @@
+PODS:
+  - JTCalendar (2.1.9)
+  - UAProgressView (0.1.3)
+
+DEPENDENCIES:
+  - JTCalendar (~> 2.0)
+  - UAProgressView
+
+SPEC CHECKSUMS:
+  JTCalendar: beb2f4c1b639bf6880f680b4858227acf83a049c
+  UAProgressView: ce49aee47c14df6dc372f6fd57852f570ca97e6b
+
+PODFILE CHECKSUM: afdba16983a87152db1397cd7184f6cd00530269
+
+COCOAPODS: 1.0.1
