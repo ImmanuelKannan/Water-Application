@@ -82,6 +82,9 @@ static const CGFloat kWeekViewComponents = 76;
     //Sets up the gesture recognizers and adds them to the view
     [self setupGestureRecognizers];
     
+    self.navigationBar.barTintColor = [UIColor colorWithRed:51./255. green:107./255. blue:204./255. alpha:1.];
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+    
 }
 
 
@@ -272,8 +275,11 @@ static const CGFloat kWeekViewComponents = 76;
             _menuYPosition.constant = 70;
             
             [self.view layoutIfNeeded];
+            [self setNeedsStatusBarAppearanceUpdate];
         }];
     }
+    
+    
 }
 
 - (void)swipeDown: (UISwipeGestureRecognizer *)sender {
@@ -296,8 +302,11 @@ static const CGFloat kWeekViewComponents = 76;
             
 
             [self.view layoutIfNeeded];
+            [self setNeedsStatusBarAppearanceUpdate];
         }];
     }
+    
+    
 }
 
 - (void)setupCalendar {
@@ -318,6 +327,15 @@ static const CGFloat kWeekViewComponents = 76;
     
     [self.view addGestureRecognizer:_swipeUpRecognizer];
     [self.view addGestureRecognizer:_swipeDownRecognizer];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    
+    if (_calendarManager.settings.weekModeEnabled) {
+        return UIStatusBarStyleDefault;
+    } else {
+        return UIStatusBarStyleLightContent;
+    }
 }
 
 /*
