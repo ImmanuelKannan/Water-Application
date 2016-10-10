@@ -15,7 +15,6 @@
 
 @property (nonatomic, strong) NSManagedObjectContext *context;
 
-@property (nonatomic, strong) NSArray *fetchedObjects;
 @property (nonatomic, strong) NSEntityDescription *entityDescription;
 @property (nonatomic, strong) NSFetchRequest *fetchRequest;
 
@@ -46,7 +45,6 @@
             NSLog(@"!! - NSManagedObjectContext IS NOT initialized - !!");
         }
         
-        _fetchedObjects = [[NSArray alloc] init];
         _entityDescription = [NSEntityDescription entityForName:@"Entry" inManagedObjectContext:self.context];
         _fetchRequest = [[NSFetchRequest alloc] init];
         _fetchRequest.entity = _entityDescription;
@@ -79,22 +77,6 @@
 }
 
 - (Entry *)entryWithDate: (NSString *)date {
-    /*
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
-    [_fetchRequest setPredicate:predicate];
-    
-    Entry *entry;
-    
-    NSError *error = nil;
-    if ((self.fetchedObjects = [self.context executeFetchRequest:_fetchRequest error:&error]).count == 1) {
-        NSLog(@"Entry Manager: Entry with date: %@ found", date);
-        entry = [self.fetchedObjects objectAtIndex:0];
-        return entry;
-    } else {
-        NSLog(@"Entry Manager: Entry with date: %@ not found", date);
-        return nil;
-    }
-     */
     
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"date == %@", date];
     NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:@"Entry"];
@@ -105,8 +87,7 @@
     NSError *err = nil;
     if ((arr = [self.context executeFetchRequest:fetch error:&err]).count == 1) {
         NSLog(@"Entry Manager, (-entryWithDate): Entry with date %@ found", date);
-        Entry *entry = [arr firstObject];
-        return entry;
+        return [arr firstObject];
     } else {
         NSLog(@"Entry Manager, (-entryWithDate): Entry with date %@ NOT found", date);
         return nil;
@@ -119,28 +100,6 @@
     [entry setValue:[NSNumber numberWithInt:0] forKey:@"numberOfGlasses"];
     
     return entry;
-}
-
-
-- (BOOL)entryWithDateDoesExist: (NSString *)date {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", date];
-    
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:self.entityDescription];
-    [fetchRequest setPredicate:predicate];
-    [fetchRequest setFetchLimit:1];
-    
-    
-    NSError *error = nil;
-    NSUInteger count = [self.context countForFetchRequest:fetchRequest error:&error];
-    
-    if (count == 0) {
-        NSLog(@"Error: %@", error);
-        return NO;
-    } else {
-        return YES;
-    }
-    
 }
 
 - (void)addOneGlassToCurrentEntry {
@@ -163,6 +122,7 @@
 }
 
 - (void)saveData {
+    
     NSError *error = nil;
     if ([self.context save:&error] == NO)
         NSLog(@"There has been an error");
@@ -179,15 +139,14 @@ static Entry *currentEntry = nil;
 
 + (void)setCurrentEntry: (NSString *)date {
     
-    if ((currentEntry = [[EntryManager sharedManager] entryWithDate:date])) {
-        NSLog(@"Cureent Entry: %@", currentEntry);
+    currentEntry = [[EntryManager sharedManager] entryWithDate:date];
+    
+    if (currentEntry) {
+//        [[EntryManager entryCache] setObject:currentEntry forKey:[NSString stringWithFormat:@"%@",date]];
+        [EntryManager addCurrentEntryToCache];
     }
     
-    else {
-        currentEntry.date = date;
-        currentEntry.numberOfGlasses = 0;
-    }
-    
+    NSLog(@"Current Entry: %@", currentEntry);
 }
 
 static NSMutableDictionary *entryCache = nil;
@@ -222,6 +181,20 @@ static NSMutableDictionary *entryCache = nil;
     }
     
 }
+
++ (void)addCurrentEntryToCache {
+    [[EntryManager entryCache] setObject:currentEntry forKey:[NSString stringWithFormat:@"%@", currentEntry.date]];
+}
+
++ (void)removeCurrentEntryFromCache {
+    [[EntryManager entryCache] removeObjectForKey:[NSString stringWithFormat:@"%@", currentEntry.date]];
+}
+
+// -updateCacheEntryForDate: (NSDate *)date
++ (void)updateEntryInCacheForDate: (NSDate *)date {
+    
+}
+
 
 /*
 - (NSMutableDictionary *)cache {
