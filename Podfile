@@ -6,7 +6,8 @@ target 'Water App' do
   # use_frameworks!
 
   # Pods for Water App
-
+  
+  pod 'UAProgressView'
   pod ‘JTCalendar’, ‘~> 2.0’
   target 'Water AppTests' do
     inherit! :search_paths
