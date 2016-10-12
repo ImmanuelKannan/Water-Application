@@ -75,9 +75,8 @@ static const CGFloat kWeekViewComponents = 76;
     
     [[EntryManager sharedManager] entryForToday];
     
-    _dateLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].date];
+    _dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:[[EntryManager currentEntry] date]];
     _numberOfGlassesLabel.text = [self setNumberOfGlassesLabelText:[EntryManager currentEntry]];
-    
     
     //Sets up the gesture recognizers and adds them to the view
     [self setupGestureRecognizers];
@@ -97,9 +96,13 @@ static const CGFloat kWeekViewComponents = 76;
     _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
     
     if ([EntryManager currentEntry]) {
-        _dateLabel.text = [[EntryManager currentEntry] date];
+//        _dateLabel.text = [[EntryManager currentEntry] date];
+//        _dateLabel.text = [[DateFormatterManager sharedManager] dateStringWithStyleFromEntry:[EntryManager currentEntry].date];
+        _dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:dateString];
     } else {
-        _dateLabel.text = dateString;
+//        _dateLabel.text = dateString;
+//        _dateLabel.text = [[DateFormatterManager sharedManager] dateStringWithStyleFromEntry:dateString];
+        _dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:dateString];
     }
     
 //    if (entry) {
@@ -205,9 +208,15 @@ static const CGFloat kWeekViewComponents = 76;
 //    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
 //    [_calendarManager reload];
     
+    NSString *dateString = _dateLabel.text;
+    
     if ([EntryManager currentEntry] == nil) {
-        [[EntryManager sharedManager] createEntryForDate:_dateLabel.text];
-        [EntryManager setCurrentEntry:_dateLabel.text];
+//        [[EntryManager sharedManager] createEntryForDate:_dateLabel.text];
+//        [EntryManager setCurrentEntry:_dateLabel.text];
+        
+        [[EntryManager sharedManager] createEntryForDate:[[DateFormatterManager sharedManager] convertStylishDateToEntryDate:dateString]];
+        [EntryManager setCurrentEntry:[[DateFormatterManager sharedManager] convertStylishDateToEntryDate:dateString]];
+        
         
         [[EntryManager sharedManager] addOneGlassToCurrentEntry];
         self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
@@ -283,6 +292,8 @@ static const CGFloat kWeekViewComponents = 76;
 }
 
 - (void)swipeDown: (UISwipeGestureRecognizer *)sender {
+    
+    NSLog(@"SWIPED DOWN");
     if (_calendarManager.settings.weekModeEnabled == YES) {
         _calendarManager.settings.weekModeEnabled = NO;
         [_calendarManager reload];
@@ -291,9 +302,9 @@ static const CGFloat kWeekViewComponents = 76;
     self.calendarContentViewHeight.constant = kCalendarContentViewHeightInMonthView;
     
     if (_calendarContentViewHeight.constant == kCalendarContentViewHeightInMonthView) {
-        
+            NSLog(@"This has been called");
         [UIView animateWithDuration:.5f animations:^void {
-            
+
             _numberOfGlassesLabelYPosition.constant = -100.;
             _navigationBarHeight.constant = 0;
             _plusButtonYPosition.constant = -100.;
