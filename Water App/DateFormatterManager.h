@@ -17,4 +17,7 @@
 
 - (NSString *)todayString;
 
+- (NSString *)convertEntryDateToStylishDate: (NSString *)entryDate;
+- (NSString *)convertStylishDateToEntryDate: (NSString *)stylishDate;
+
 @end

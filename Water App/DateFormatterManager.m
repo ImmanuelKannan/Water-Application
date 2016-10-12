@@ -13,7 +13,10 @@
 @property (nonatomic, strong) NSDateFormatter *shortDateFormatter;
 @property (nonatomic, strong) NSDateFormatter *formatWithMediumStyle;
 @property (nonatomic, strong) NSDateFormatter *formatForEntryDate;
-@property (nonatomic, strong) NSString *todayString;
+
+@property (nonatomic, strong) NSDateFormatter *format;
+@property (nonatomic, strong) NSDateFormatter *stylishFormat;
+@property (nonatomic, strong) NSDateFormatter *entryFormat;
 
 @end
 
@@ -37,6 +40,12 @@
         _shortDateFormatter = [[NSDateFormatter alloc] init];
         _formatWithMediumStyle = [[NSDateFormatter alloc] init];
         _formatForEntryDate = [[NSDateFormatter alloc] init];
+        
+        _stylishFormat = [[NSDateFormatter alloc] init];
+        _stylishFormat.dateFormat = @"dd MMM, yyyy";
+        
+        _entryFormat = [[NSDateFormatter alloc] init];
+        _entryFormat.dateFormat = @"yyyy-MM-dd";
     }
     
     return self;
@@ -63,9 +72,40 @@
 }
 
 - (NSString *)todayString {
-    _todayString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]];
     
-    return _todayString;
+    NSString *todayDateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:[NSDate date]];
+    
+    return todayDateString;
+}
+
+- (NSString *)convertEntryDateToStylishDate: (NSString *)entryDate {
+    
+    /*
+        Converts a dateString from one with an entry
+        format (e.g. 2016-08-24) to one with a more 
+        readable, stylish format (e.g. 24 August, 2016)
+    */
+    
+    NSDate *tempDate = [_entryFormat dateFromString:entryDate];
+    
+    NSString *stylishDate = [_stylishFormat stringFromDate:tempDate];
+    
+    return stylishDate;
+}
+
+- (NSString *)convertStylishDateToEntryDate: (NSString *)stylishDate {
+    
+    /*
+        Converts a dateString from one with a more
+        readable, stylish format (e.g. 24 August, 2016)
+        to an entry format (e.g. 2016-08-24)
+    */
+    
+    NSDate *tempDate = [_stylishFormat dateFromString:stylishDate];
+    
+    NSString *entryDate = [_entryFormat stringFromDate:tempDate];
+    
+    return entryDate;
 }
 
 @end
