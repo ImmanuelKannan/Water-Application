@@ -13,37 +13,24 @@
 
 #pragma mark - Constants
 
-static const CGFloat kCalendarContentViewHeightInWeekView = 80;
-static const CGFloat kCalendarContentViewHeightInMonthView = 280;
-
-static const CGFloat kWeekViewComponents = 76; 
+static const float goal = 8.0;
 
 #pragma mark - Class Extension
 
 @interface MainViewController ()
 
-//JTCalendar properties
-@property (nonatomic, weak) IBOutlet JTCalendarMenuView *calendarMenuView;
-@property (nonatomic, weak) IBOutlet JTHorizontalCalendarView *calendarContentView;
-@property (nonatomic, strong) JTCalendarManager *calendarManager;
+//FSCalendar Properties
+@property (nonatomic, strong) IBOutlet FSCalendar *calendar;
+
+// UAProgressView Properties
+@property (nonatomic, strong) IBOutlet UAProgressView *progressView;
+@property (nonatomic, strong) UILabel *progressViewTextLabel;
 
 //XIB properties
 @property (nonatomic, strong) IBOutlet UILabel *dateLabel;
-@property (nonatomic, strong) IBOutlet UILabel *numberOfGlassesLabel;
 @property (strong, nonatomic) IBOutlet UINavigationBar *navigationBar;
 
-
-//XIB constraints
-@property (nonatomic, weak) IBOutlet NSLayoutConstraint *minusButtonYPosition;
-@property (nonatomic, weak) IBOutlet NSLayoutConstraint *plusButtonYPosition;
-@property (nonatomic, weak) IBOutlet NSLayoutConstraint *numberOfGlassesLabelYPosition;
-@property (nonatomic, weak) IBOutlet NSLayoutConstraint *navigationBarHeight;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *calendarContentViewHeight;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *menuYPosition;
-
-//Gesture Recognizers
-@property (nonatomic, strong) UISwipeGestureRecognizer *swipeUpRecognizer;
-@property (nonatomic, strong) UISwipeGestureRecognizer *swipeDownRecognizer;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *calendarHeightConstraint;
 
 @end
 
@@ -72,291 +59,179 @@ static const CGFloat kWeekViewComponents = 76;
     self.navigationBar.topItem.title = @"Progress";
     
     [self setupCalendar];
-    
+    [self setupProgressView];
+    [self setupNavigationBar];
     [[EntryManager sharedManager] entryForToday];
     
     _dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:[[EntryManager currentEntry] date]];
-    _numberOfGlassesLabel.text = [self setNumberOfGlassesLabelText:[EntryManager currentEntry]];
-    
-    //Sets up the gesture recognizers and adds them to the view
-    [self setupGestureRecognizers];
-    
-    self.navigationBar.barTintColor = [UIColor colorWithRed:51./255. green:107./255. blue:204./255. alpha:1.];
-    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+    _progressViewTextLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
     
 }
 
 
-#pragma mark - JTCalendar Methods 
+#pragma mark - FSCalendar methods
 
-- (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
-    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:dayView.date];
+- (void)calendar:(FSCalendar *)calendar boundingRectWillChange:(CGRect)bounds animated:(BOOL)animated
+{
+    calendar.frame = (CGRect){calendar.frame.origin,bounds.size};
     
-    [EntryManager setCurrentEntry:dateString];
-    _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
-    
-    if ([EntryManager currentEntry]) {
-//        _dateLabel.text = [[EntryManager currentEntry] date];
-//        _dateLabel.text = [[DateFormatterManager sharedManager] dateStringWithStyleFromEntry:[EntryManager currentEntry].date];
-        _dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:dateString];
-    } else {
-//        _dateLabel.text = dateString;
-//        _dateLabel.text = [[DateFormatterManager sharedManager] dateStringWithStyleFromEntry:dateString];
-        _dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:dateString];
-    }
-    
-//    if (entry) {
-//        [EntryManager setCurrentEntry:dateString];
-//        
-//        _dateLabel.text = [[EntryManager currentEntry] date];
-//        _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
-//    }
-//    
-//    else {
-//        [EntryManager setCurrentEntry:dateString];
-////        _dateLabel.text = dateString;
-////        _numberOfGlassesLabel.text = @"No Entry";
-//        _dateLabel.text = dateString;
-//        _numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
-//    }
-    
-    for (NSString *key in [[EntryManager entryCache] allKeys]) {
-        NSLog(@"IN CACHE: %@", [[[EntryManager entryCache] objectForKey:key] description]);
-    }
+    NSLog(@"%f", calendar.frame.size.height);
 }
 
-- (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
-    
-    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:dayView.date];
+-(UIColor *)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance eventColorForDate:(NSDate *)date {
+    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:date];
     Entry *entry = [[EntryManager entryCache] objectForKey:dateString];
     
-    dayView.hidden = NO;
-    dayView.circleView.hidden = YES;
+    if ([entry.numberOfGlasses isEqualToNumber:[NSNumber numberWithInt:0]]) {
+        return [UIColor greenColor];
+    } else {
+        return [UIColor clearColor];
+    }
+}
+
+-(void)calendar:(FSCalendar *)calendar didSelectDate:(NSDate *)date {
+    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:date];
     
-    //Tests if dayView.date is the same day as today
-    if ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]) {
-        dayView.circleView.hidden = NO;
-        dayView.circleView.backgroundColor = [UIColor orangeColor];
+    [EntryManager setCurrentEntry:dateString];
+    self.progressViewTextLabel.text = [NSString stringWithFormat:@"%@", [[EntryManager currentEntry] numberOfGlasses]];
+    
+    if ([EntryManager currentEntry]) {
+        self.dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:dateString];
+    } else {
+        self.progressViewTextLabel.text = @"0";
+        self.dateLabel.text = [[DateFormatterManager sharedManager] convertEntryDateToStylishDate:dateString];
     }
     
-    //Tests if an entry exists for dayView.date and if it's today's date
-    else if (entry && ([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date] == NO)) {
-        dayView.circleView.hidden = NO;
-        dayView.textLabel.textColor = [UIColor whiteColor];
-        
-        switch ([entry.numberOfGlasses intValue]) {
-            case 1:
-                dayView.circleView.backgroundColor = [UIColor colorWithRed:133.0f/255.0f
-                                                                     green:149.0f/255.0f
-                                                                      blue:255.0f/255.0f
-                                                                     alpha:1.0f];
-                break;
-            case 2:
-                dayView.circleView.backgroundColor = [UIColor colorWithRed:74.0f/255.0f
-                                                                     green:98.0f/255.0f
-                                                                      blue:255.0f/255.0f
-                                                                     alpha:1.0f];
-                break;
-            case 3:
-                dayView.circleView.backgroundColor = [UIColor colorWithRed:23.0f/255.0f
-                                                                     green:53.0f/255.0f
-                                                                      blue:252.0f/255.0f
-                                                                     alpha:1.0f];
-                break;
-            default:
-                dayView.circleView.backgroundColor = [UIColor greenColor];
-                break;
+    [self.progressView setProgress:([[EntryManager currentEntry].numberOfGlasses floatValue] / goal) animated:YES];
+    NSLog(@"%@", self.progressViewTextLabel.text);
+    
+    [_calendar reloadData];
+}
+
+// Sets the color of the circle that displays the number of glasses the user has drunk
+-(UIColor *)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance fillDefaultColorForDate:(NSDate *)date{
+    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:date];
+    Entry *entry = [[EntryManager entryCache] objectForKey:dateString];
+    
+    if (entry) {
+        if ([entry.numberOfGlasses isEqualToNumber:[NSNumber numberWithInteger:1]]) {
+            return [UIColor colorWithRed:34./255. green:167./255. blue:240./255. alpha:1];
+        }
+        else if ([entry.numberOfGlasses isEqualToNumber:[NSNumber numberWithInteger:2]]) {
+            return  [UIColor colorWithRed:65./255. green:131./255. blue:215./255. alpha:1];
+        }
+        else if ([entry.numberOfGlasses isEqualToNumber:[NSNumber numberWithInteger:3]]) {
+            return  [UIColor colorWithRed:31./255. green:58./255. blue:147./255. alpha:1];
+        }
+        else {
+            return [UIColor clearColor];
         }
     }
     
-    //Tests if dayView.date is from another month and if an entry exists
-    else if ([dayView isFromAnotherMonth] && (entry == NO)) {
-        dayView.textLabel.textColor = [UIColor grayColor];
-    }
-    
-    //Sets default appearance for every other dayView
     else {
-        dayView.circleView.hidden = YES;
-        dayView.textLabel.textColor = [UIColor blackColor];
+        return [UIColor clearColor];
     }
-    
+
 }
--(UIView<JTCalendarDay> *)calendarBuildDayView:(JTCalendarManager *)calendar {
-    JTCalendarDayView *view = [JTCalendarDayView new];
-    view.textLabel.font = [UIFont fontWithName:@"Avenir-Light" size:13];
+
+// Sets the color of the text that displays the date on the calendar
+-(UIColor *)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance titleDefaultColorForDate:(NSDate *)date {
+    NSString *dateString = [[[DateFormatterManager sharedManager] formatForEntryDate] stringFromDate:date];
+    Entry *entry = [[EntryManager entryCache] objectForKey:dateString];
     
-    return view;
+    if (entry && (entry.numberOfGlasses > [NSNumber numberWithInteger:0])) {
+        return [UIColor whiteColor];
+    } else {
+        return [UIColor blackColor];
+    }
+}
+
+// Sets the color of the selection circle.
+- (UIColor *)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance fillSelectionColorForDate:(NSDate *)date {
+    return  [UIColor colorWithRed:155./255. green:89./255. blue:182./255. alpha:1];
 }
 
 
--(UIView *)calendarBuildMenuItemView:(JTCalendarManager *)calendar {
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 200, 300, 100)];
+#pragma mark - Setup methods
+
+- (void) setupCalendar {
+    _calendar.scopeGesture.enabled = YES;
+    _calendar.placeholderType = FSCalendarPlaceholderTypeNone;
+    [_calendar selectDate:[NSDate date]];
     
-    label.textColor = [UIColor redColor];
-    label.textAlignment = NSTextAlignmentCenter;
+    self.calendar.appearance.headerTitleFont = [UIFont fontWithName:@"HelveticaNeue" size:20];
+    self.calendar.appearance.headerTitleColor = [UIColor blackColor];
+    self.calendar.appearance.weekdayFont = [UIFont fontWithName:@"HelveticaNeue" size:5];
+    self.calendar.appearance.weekdayTextColor = [UIColor blackColor];
+}
+
+- (void)setupProgressView {
+    self.progressView.fillOnTouch = NO;
+    self.progressView.tintColor = [UIColor colorWithRed:47./255. green:112./255. blue:224./255. alpha:1.];
+    self.progressView.borderWidth = 0.0;
+    self.progressView.lineWidth = 5.5;
     
-    return label;
+    self.progressViewTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60.0, 32.0)];
+    self.progressViewTextLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:28];
+    self.progressViewTextLabel.textAlignment = NSTextAlignmentCenter;
+    self.progressViewTextLabel.textColor = self.progressView.tintColor;
+    self.progressViewTextLabel.backgroundColor = [UIColor clearColor];
+    self.progressView.centralView = _progressViewTextLabel;
+}
+
+- (void)setupNavigationBar {
+    self.navigationBar.barTintColor = [UIColor colorWithRed:47./255. green:112./255. blue:224./255. alpha:1.];
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor],
+                                               NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue" size:20]};
 }
 
 
 #pragma mark - UI Methods
 
 - (IBAction)addOneToNumberOfGlassesButtonWasPressed {
-//    [[EntryManager sharedManager] addOneGlassToCurrentEntry];
-//    //self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager sharedManager].currentlySelectedEntry.numberOfGlasses];
-//    
-//    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
-//    [_calendarManager reload];
+    NSString *dateString = self.dateLabel.text;
     
-    NSString *dateString = _dateLabel.text;
-    
+    /*
+        If the current entry doesn't exist, create an entry and
+        set it as the current entry. Increment the numberOfGlasses
+        and then set the progressViewTextLabel text.
+    */
     if ([EntryManager currentEntry] == nil) {
-//        [[EntryManager sharedManager] createEntryForDate:_dateLabel.text];
-//        [EntryManager setCurrentEntry:_dateLabel.text];
-        
         [[EntryManager sharedManager] createEntryForDate:[[DateFormatterManager sharedManager] convertStylishDateToEntryDate:dateString]];
         [EntryManager setCurrentEntry:[[DateFormatterManager sharedManager] convertStylishDateToEntryDate:dateString]];
         
-        
         [[EntryManager sharedManager] addOneGlassToCurrentEntry];
-        self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
-//        self.dateLabel.text = [EntryManager currentEntry].date;
+        self.progressViewTextLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
         
     }
     
+    /*
+        If a current entry does exist, increment the numberOfGlasses
+        and set the progressViewTextLabel text
+    */
     else {
         [[EntryManager sharedManager] addOneGlassToCurrentEntry];
-        self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
-//        self.dateLabel.text = [EntryManager currentEntry].date;
-        
+        self.progressViewTextLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
     }
     
-    [_calendarManager reload];
+    //  Set the progress of the progressView
+    [self.progressView setProgress:([[EntryManager currentEntry].numberOfGlasses floatValue] / goal) animated:YES];
+    
 }
 
 - (IBAction)subtractOneFromNumberOfGlassesButtonWasPressed {
     [[EntryManager sharedManager] subtractOneGlassFromCurrentEntry];
-    self.numberOfGlassesLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
+    self.progressViewTextLabel.text = [NSString stringWithFormat:@"%@", [EntryManager currentEntry].numberOfGlasses];
     
     if ([[EntryManager currentEntry].numberOfGlasses isEqualToNumber:[NSNumber numberWithInt:0]]) {
-        NSLog(@"LOL");
         [[EntryManager entryCache] removeObjectForKey:[EntryManager currentEntry].date];
         [[EntryManager getContext] deleteObject:[EntryManager currentEntry]];
         [EntryManager setCurrentEntry:nil];
         
     }
     
-    [_calendarManager reload];
-}
-
-- (NSString *)setNumberOfGlassesLabelText: (Entry *)entry {
-    NSString *numberOfGlassesText;
-    
-    if (entry) {
-        numberOfGlassesText = [NSString stringWithFormat:@"%@", entry.numberOfGlasses];
-        return numberOfGlassesText;
-    }
-    
-    else {
-        numberOfGlassesText = @"No Entry Found";
-        return numberOfGlassesText;
-    }
-}
-
-
-#pragma mark - Gesture Recognizer Methods
-
-- (void)swipeUp: (UISwipeGestureRecognizer *)sender {
-    
-    if (_calendarManager.settings.weekModeEnabled == NO) {
-        _calendarManager.settings.weekModeEnabled = YES;
-        [_calendarManager reload];
-    }
-    
-    self.calendarContentViewHeight.constant = kCalendarContentViewHeightInWeekView;
-    
-    if (_calendarContentViewHeight.constant == kCalendarContentViewHeightInWeekView) {
-        [UIView animateWithDuration:.5f animations:^void {
-            _minusButtonYPosition.constant = 76.;
-            _numberOfGlassesLabelYPosition.constant = 76.;
-            _plusButtonYPosition.constant = 76.;
-            _navigationBarHeight.constant = -64;
-            _menuYPosition.constant = 70;
-            
-            [self.view layoutIfNeeded];
-            [self setNeedsStatusBarAppearanceUpdate];
-        }];
-    }
-    
+    [self.progressView setProgress:([[EntryManager currentEntry].numberOfGlasses floatValue] / goal) animated:YES];
     
 }
-
-- (void)swipeDown: (UISwipeGestureRecognizer *)sender {
-    
-    NSLog(@"SWIPED DOWN");
-    if (_calendarManager.settings.weekModeEnabled == YES) {
-        _calendarManager.settings.weekModeEnabled = NO;
-        [_calendarManager reload];
-    }
-    
-    self.calendarContentViewHeight.constant = kCalendarContentViewHeightInMonthView;
-    
-    if (_calendarContentViewHeight.constant == kCalendarContentViewHeightInMonthView) {
-            NSLog(@"This has been called");
-        [UIView animateWithDuration:.5f animations:^void {
-
-            _numberOfGlassesLabelYPosition.constant = -100.;
-            _navigationBarHeight.constant = 0;
-            _plusButtonYPosition.constant = -100.;
-            _minusButtonYPosition.constant = -100.;
-            _menuYPosition.constant = 110;
-            
-
-            [self.view layoutIfNeeded];
-            [self setNeedsStatusBarAppearanceUpdate];
-        }];
-    }
-    
-    
-}
-
-- (void)setupCalendar {
-    _calendarManager = [JTCalendarManager new];
-    _calendarManager.delegate = self;
-    
-    [_calendarManager setMenuView:_calendarMenuView];
-    [_calendarManager setContentView:_calendarContentView];
-    [_calendarManager setDate:[NSDate date]];
-}
-
-- (void)setupGestureRecognizers {
-    _swipeUpRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUp:)];
-    _swipeUpRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
-    
-    _swipeDownRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDown:)];
-    _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
-    
-    [self.view addGestureRecognizer:_swipeUpRecognizer];
-    [self.view addGestureRecognizer:_swipeDownRecognizer];
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle {
-    
-    if (_calendarManager.settings.weekModeEnabled) {
-        return UIStatusBarStyleDefault;
-    } else {
-        return UIStatusBarStyleLightContent;
-    }
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
