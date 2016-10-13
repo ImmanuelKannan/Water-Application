@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <JTCalendar/JTCalendar.h>
+#import <FSCalendar/FSCalendar.h>
+#import <UAProgressView/UAProgressView.h>
 
-@interface MainViewController : UIViewController < JTCalendarDelegate, UIGestureRecognizerDelegate >
+@interface MainViewController : UIViewController < FSCalendarDataSource, FSCalendarDelegate,
+FSCalendarDelegateAppearance >
+
 
 @end
