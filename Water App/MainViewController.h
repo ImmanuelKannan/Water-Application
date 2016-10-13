@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <FSCalendar/FSCalendar.h>
+#import <FScalendar/FSCalendar.h>
 #import <UAProgressView/UAProgressView.h>
 
 @interface MainViewController : UIViewController < FSCalendarDataSource, FSCalendarDelegate,
